@@ -210,7 +210,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
     }
   };
 
-  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT (SAFE FROM UNDEFINED MAP)
+  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT (STRICTLY 1 SHEET OF PAPER)
   const handleDirectCheckoutAndPrint = () => {
     if (!activeOrder || currentItems.length === 0) return;
 
@@ -233,7 +233,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
     saveCurrentOrderWithItems([]);
 
     // 4. Show Notification Toast
-    setSuccessToast(`✔ Thanh Toán Thành Công! Máy in đang in ${copies} bản hóa đơn liền kề.`);
+    setSuccessToast(`✔ Thanh Toán Thành Công! Máy in đang in 2 bill trên 1 tờ giấy (1 sheet).`);
     setTimeout(() => {
       setSuccessToast(null);
     }, 3500);
@@ -291,7 +291,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
 
             <div className="hidden sm:flex items-center space-x-1.5 text-[11px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1.5 rounded-lg shrink-0">
               <Zap className="w-3.5 h-3.5 text-emerald-600" />
-              <span>In Liền Kề: {printSettings?.invoiceCopies || 2} Bill</span>
+              <span>Khổ In 1 Sheet (80mm): {printSettings?.invoiceCopies || 2} Bill</span>
             </div>
           </div>
 
@@ -583,41 +583,41 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
         </div>
       )}
 
-      {/* DIRECT THERMAL RECEIPT WRAPPER - PRINTS 2 COPIES BACK-TO-BACK (SAFE ARRAY MAP GUARANTEED) */}
+      {/* DIRECT THERMAL RECEIPT WRAPPER - STRICTLY 1 SHEET OF PAPER */}
       {orderForPrinting && (
         <div id="printable-receipt-wrapper" className="hidden print:block">
           {Array.from({ length: printSettings?.invoiceCopies || 2 }).map((_, copyIdx) => (
-            <div key={copyIdx} className="receipt-copy text-black bg-white font-mono p-1 leading-tight text-xs space-y-1">
+            <div key={copyIdx} className="receipt-copy text-black bg-white font-mono p-0 leading-tight text-[11px]">
               
               {/* Header */}
-              <div className="text-center space-y-0.5 border-b border-dashed border-black pb-1">
-                <h4 className="font-extrabold text-sm uppercase tracking-wider">{printSettings?.restaurantName || 'CHA GIO BAP QUANG NGAI'}</h4>
-                <p className="text-[10px] text-black">{printSettings?.address || '87, Hung Vuong, Phuong Ba Ria, TP HCM'}</p>
-                <p className="text-[10px] font-bold text-black">SDT: {printSettings?.phone || '0972371722'}</p>
+              <div className="text-center border-b border-dashed border-black pb-0.5 mb-1">
+                <h4 className="font-extrabold text-xs uppercase tracking-tight">{printSettings?.restaurantName || 'CHA GIO BAP QUANG NGAI'}</h4>
+                <p className="text-[9px] text-black leading-none">{printSettings?.address || '87, Hung Vuong, Phuong Ba Ria, TP HCM'}</p>
+                <p className="text-[9px] font-bold text-black leading-none">SDT: {printSettings?.phone || '0972371722'}</p>
                 {printSettings?.wifiName && (
-                  <p className="text-[10px] text-black font-medium">Wifi: {printSettings.wifiName} - MK: {printSettings.wifiPassword || '0914683351'}</p>
+                  <p className="text-[9px] text-black leading-none">Wifi: {printSettings.wifiName} - MK: {printSettings.wifiPassword || '0914683351'}</p>
                 )}
               </div>
 
               {/* Title & Info */}
-              <div className="text-center my-1 space-y-0.5">
-                <h3 className="font-extrabold text-sm uppercase tracking-tight">HOA DON THANH TOAN</h3>
-                <p className="text-[11px] font-mono font-bold text-black">Ma HD: {orderForPrinting.code || 'HD-NEW'}</p>
-                <p className="text-[10px] font-mono text-black">
+              <div className="text-center my-0.5">
+                <h3 className="font-extrabold text-xs uppercase tracking-tight">HOA DON THANH TOAN</h3>
+                <p className="text-[10px] font-mono font-bold text-black">Ma HD: {orderForPrinting.code || 'HD-NEW'}</p>
+                <p className="text-[9px] font-mono text-black">
                   Ngay: {new Date(orderForPrinting.createdAt || Date.now()).toLocaleTimeString('vi-VN')} {new Date(orderForPrinting.createdAt || Date.now()).toLocaleDateString('vi-VN')}
                 </p>
-                <p className="text-[10px] font-extrabold uppercase text-black">(LIÊN {copyIdx + 1})</p>
+                <p className="text-[9px] font-extrabold uppercase text-black">(LIÊN {copyIdx + 1})</p>
               </div>
 
               {/* Ascii Grid Table matching exact photo */}
-              <div className="my-1 font-mono text-[11px] leading-tight select-none">
-                <div className="text-black text-[10px] truncate">+-----------------------+----+----------+</div>
+              <div className="my-0.5 font-mono text-[10px] leading-tight select-none">
+                <div className="text-black text-[9px] truncate">+-----------------------+----+----------+</div>
                 <div className="flex font-bold justify-between border-y border-black py-0.5">
                   <span className="w-1/2">|Ten mon</span>
                   <span className="w-1/6 text-center">| SL |</span>
                   <span className="w-1/3 text-right">T.Tien |</span>
                 </div>
-                <div className="text-black text-[10px] truncate">+-----------------------+----+----------+</div>
+                <div className="text-black text-[9px] truncate">+-----------------------+----+----------+</div>
 
                 {(orderForPrinting.items || []).map((item, idx) => (
                   <div key={idx} className="flex justify-between items-center py-0.5 font-bold">
@@ -626,22 +626,22 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
                     <span className="w-1/3 text-right">{(item?.totalPrice || 0).toLocaleString('vi-VN')} d |</span>
                   </div>
                 ))}
-                <div className="text-black text-[10px]">+-----------------------+----+----------+</div>
+                <div className="text-black text-[9px]">+-----------------------+----+----------+</div>
               </div>
 
               {/* Summary */}
-              <div className="text-right pt-1 font-extrabold text-sm border-t border-black">
+              <div className="text-right pt-0.5 font-extrabold text-xs border-t border-black">
                 <span>Tong cong: {(orderForPrinting.totalAmount || 0).toLocaleString('vi-VN')} d</span>
               </div>
 
               {/* Footer */}
-              <div className="text-center mt-2 pt-1 border-t border-dashed border-black font-bold text-[10px] uppercase">
+              <div className="text-center mt-1 pt-0.5 border-t border-dashed border-black font-bold text-[9px] uppercase">
                 <p>{printSettings?.footerNote || 'CAM ON VA HEN GAP LAI QUY KHACH!'}</p>
               </div>
 
               {/* Separator between Lien 1 and Lien 2 */}
               {copyIdx < (printSettings?.invoiceCopies || 2) - 1 && (
-                <div className="py-2 text-center text-[10px] font-bold text-black border-b-2 border-dashed border-black my-2">
+                <div className="py-1 text-center text-[9px] font-bold text-black border-b border-dashed border-black my-1">
                   - - - - - - - - (DAO CẮT BILL) - - - - - - - -
                 </div>
               )}
