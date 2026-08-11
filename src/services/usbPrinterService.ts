@@ -68,11 +68,9 @@ export function generateEscPosBuffer(order: Order, settings: PrintSettings): Uin
     const qtyStr = String(item.quantity || 1).padStart(2, ' ');
     const priceStr = `${(item.totalPrice || 0).toLocaleString('vi-VN')} d`.padStart(9, ' ');
 
-    addBytes([0x1d, 0x21, 0x01]); // Double Height for SL and Dish Name
-    addBytes([0x1b, 0x45, 0x01]); // Bold text
+    addBytes([0x1d, 0x21, 0x00]); // Normal weight font
+    addBytes([0x1b, 0x45, 0x00]); // Normal (No bold)
     addStr(`| ${qtyStr} |${paddedName}|${priceStr} |\n`);
-    addBytes([0x1d, 0x21, 0x00]); // Reset font size
-    addBytes([0x1b, 0x45, 0x00]); // Reset bold
     addStr('+----+-----------------------+----------+\n'); // Solid Cell Border Line for each dish!
   });
 
