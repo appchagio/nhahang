@@ -178,6 +178,29 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                   onClick={handleTestPrint}
                   className="px-4 py-2.5 bg-[#242823] hover:bg-[#181c17] text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center space-x-1.5"
                 >
+                  <Printer className="w-4 h-4 text-emerald-400" />
+                  <span>In Thử</span>
+                </button>
+              </div>
+            </div>
+
+            {/* HƯỚNG DẪN IN NGẦM KHÔNG CẦN BẤM IN TRÊN CỬA SỔ BẢNG HỎI */}
+            <div className="p-4 bg-emerald-50/80 border border-emerald-200 rounded-2xl space-y-2">
+              <div className="flex items-center space-x-2 text-emerald-900 font-extrabold text-xs">
+                <Zap className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Cấu Hình In Ngầm Tự Động (Bypass Bảng Hỏi Chrome Print Preview)</span>
+              </div>
+              <p className="text-[11px] text-slate-700 leading-relaxed">
+                Để máy in nhiệt tự động in bill ngay khi bấm <strong>"THANH TOÁN ĐƠN HÀNG"</strong> mà <strong>KHÔNG HIỆN BẢNG HỎI CỦA TRÌNH DUYỆT</strong> nữa:
+              </p>
+              <div className="p-2.5 bg-slate-900 text-emerald-300 font-mono text-[11px] rounded-xl flex items-center justify-between">
+                <span>--kiosk-printing</span>
+                <span className="text-[10px] text-slate-400 font-sans">Chế độ Silent POS</span>
+              </div>
+              <p className="text-[10px] text-slate-600 italic">
+                👉 <strong>Cách làm:</strong> Nhấp chuột phải vào biểu tượng Google Chrome trên màn hình Desktop -&gt; Chọn Properties -&gt; Tại ô Target, cách ra 1 dấu cách và dán <code>--kiosk-printing</code> vào cuối -&gt; Bấm OK.
+              </p>
+            </div>
                   <Radio className="w-4 h-4 text-emerald-400" />
                   <span>In Thử Nghiệm</span>
                 </button>
