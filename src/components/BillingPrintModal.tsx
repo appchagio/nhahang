@@ -237,97 +237,115 @@ export const BillingPrintModal: React.FC<BillingPrintModalProps> = ({
             </div>
           </div>
 
-          {/* Thermal Receipt Paper Card */}
-          <div className="my-4 flex-1 overflow-y-auto flex justify-center">
-            <div
-              className={`bg-white text-black p-5 font-mono shadow-xl rounded-sm text-xs leading-relaxed transition-all border border-slate-200 ${
-                paperFormat === 'K80' ? 'w-[320px]' : 'w-[240px]'
-              }`}
-              style={{ minHeight: '380px' }}
-            >
-              
-              {/* Header */}
-              <div className="text-center space-y-0.5 border-b border-dashed border-gray-400 pb-3">
-                <h4 className="font-bold text-sm tracking-tight">{printSettings.restaurantName}</h4>
-                <p className="text-[10px] text-gray-700">{printSettings.address}</p>
-                <p className="text-[10px] text-gray-700">SĐT: {printSettings.phone}</p>
-              </div>
+              {/* Thermal Receipt Paper Card */}
+              <div className="my-2 flex-1 overflow-y-auto flex justify-center">
+                <div
+                  id="printable-receipt"
+                  className={`bg-white text-black font-mono shadow-xl rounded-sm transition-all border border-slate-200 ${
+                    paperFormat === 'K80' ? 'w-[320px]' : 'w-[240px]'
+                  } ${
+                    printSettings.optimizeReceiptLength
+                      ? 'p-2.5 leading-tight space-y-1'
+                      : 'p-4 leading-relaxed space-y-2'
+                  }`}
+                  style={{
+                    fontSize: `${printSettings.fontSizePx || 13}px`,
+                    minHeight: printSettings.optimizeReceiptLength ? '260px' : '360px',
+                  }}
+                >
+                  
+                  {/* Header */}
+                  <div className={`text-center border-b border-dashed border-gray-400 ${
+                    printSettings.optimizeReceiptLength ? 'pb-1 space-y-0' : 'pb-2 space-y-0.5'
+                  }`}>
+                    <h4 className="font-bold text-sm tracking-tight">{printSettings.restaurantName}</h4>
+                    <p className="text-[10px] text-gray-700">{printSettings.address}</p>
+                    <p className="text-[10px] text-gray-700">SĐT: {printSettings.phone}</p>
+                  </div>
 
-              {/* Invoice Title */}
-              <div className="text-center my-3">
-                <h3 className="font-bold text-sm uppercase">
-                  {mode === 'KITCHEN_TICKET' ? 'PHIẾU IN BẾP / BAR' : 'HÓA ĐƠN THANH TOÁN'}
-                </h3>
-                <p className="text-[11px] text-gray-600">Mã HD: {order.code}</p>
-                <p className="text-[11px] text-gray-600">Bàn: {order.tableName}</p>
-                <p className="text-[10px] text-gray-500">
-                  {new Date().toLocaleString('vi-VN')}
-                </p>
-              </div>
+                  {/* Invoice Title & Compact Header */}
+                  <div className={`text-center ${printSettings.optimizeReceiptLength ? 'my-1 space-y-0' : 'my-2 space-y-0.5'}`}>
+                    <h3 className="font-extrabold text-sm uppercase">
+                      {mode === 'KITCHEN_TICKET' ? 'PHIẾU IN BẾP / BAR' : 'HÓA ĐƠN THANH TOÁN'}
+                    </h3>
+                    <p className="text-[11px] font-bold text-gray-800">
+                      Bàn: {order.tableName} • Mã HD: {order.code}
+                    </p>
+                    <p className="text-[10px] text-gray-500 font-mono">
+                      {new Date().toLocaleString('vi-VN')}
+                    </p>
+                  </div>
 
-              {/* Items List */}
-              <div className="border-t border-b border-dashed border-gray-400 py-2 my-2 text-[11px] space-y-1">
-                <div className="flex justify-between font-bold border-b border-gray-300 pb-1">
-                  <span>Món</span>
-                  <span>SL x Giá</span>
-                </div>
-
-                {order.items.map((item, idx) => (
-                  <div key={idx} className="space-y-0.5">
-                    <div className="flex justify-between font-bold">
-                      <span className="line-clamp-1">{item.name}</span>
-                      <span>{item.quantity} x {item.unitPrice.toLocaleString('vi-VN')}</span>
+                  {/* Items List Table */}
+                  <div className={`border-t border-b border-dashed border-gray-400 text-[11px] ${
+                    printSettings.optimizeReceiptLength ? 'py-1 my-1 space-y-0.5' : 'py-2 my-2 space-y-1'
+                  }`}>
+                    <div className="flex justify-between font-bold border-b border-gray-300 pb-0.5">
+                      <span>Món</span>
+                      <span>SL x Giá</span>
                     </div>
 
-                    {item.selectedToppings && item.selectedToppings.length > 0 && (
-                      <div className="pl-2 text-[10px] text-gray-600">
-                        {item.selectedToppings.map((st, i) => (
-                          <p key={i}>+ {st.topping?.name || 'Topping'}</p>
-                        ))}
+                    {order.items.map((item, idx) => (
+                      <div key={idx} className="space-y-0">
+                        <div className="flex justify-between font-bold">
+                          <span className="line-clamp-1">{item.name}</span>
+                          <span>{item.quantity} x {item.unitPrice.toLocaleString('vi-VN')}</span>
+                        </div>
+
+                        {item.selectedToppings && item.selectedToppings.length > 0 && (
+                          <div className="pl-2 text-[10px] text-gray-600">
+                            {item.selectedToppings.map((st, i) => (
+                              <p key={i}>+ {st.topping?.name || 'Topping'}</p>
+                            ))}
+                          </div>
+                        )}
+
+                        {item.note && (
+                          <p className="pl-2 text-[10px] text-gray-600 italic">Ghi chú: {item.note}</p>
+                        )}
                       </div>
-                    )}
-
-                    {item.note && (
-                      <p className="pl-2 text-[10px] text-gray-600 italic">Ghi chú: {item.note}</p>
-                    )}
+                    ))}
                   </div>
-                ))}
-              </div>
 
-              {/* Summary calculations (if invoice mode) */}
-              {mode !== 'KITCHEN_TICKET' && (
-                <div className="space-y-1 text-[11px] pt-1">
-                  <div className="flex justify-between">
-                    <span>Tạm tính:</span>
-                    <span>{order.subtotal.toLocaleString('vi-VN')} đ</span>
-                  </div>
-                  {order.discountAmount > 0 && (
-                    <div className="flex justify-between">
-                      <span>Giảm giá ({order.discountPercent}%):</span>
-                      <span>-{order.discountAmount.toLocaleString('vi-VN')} đ</span>
+                  {/* Summary calculations */}
+                  {mode !== 'KITCHEN_TICKET' && (
+                    <div className={`text-[11px] ${printSettings.optimizeReceiptLength ? 'space-y-0.5 pt-0.5' : 'space-y-1 pt-1'}`}>
+                      <div className="flex justify-between">
+                        <span>Tạm tính:</span>
+                        <span>{order.subtotal.toLocaleString('vi-VN')} đ</span>
+                      </div>
+                      {order.discountAmount > 0 && (
+                        <div className="flex justify-between">
+                          <span>Giảm giá ({order.discountPercent}%):</span>
+                          <span>-{order.discountAmount.toLocaleString('vi-VN')} đ</span>
+                        </div>
+                      )}
+                      {printSettings.showVat && (
+                        <div className="flex justify-between">
+                          <span>Thuế VAT ({order.taxPercent}%):</span>
+                          <span>{order.taxAmount.toLocaleString('vi-VN')} đ</span>
+                        </div>
+                      )}
+
+                      <div className={`flex justify-between font-bold text-sm border-t border-black ${
+                        printSettings.optimizeReceiptLength ? 'pt-1 mt-1' : 'pt-2 mt-2'
+                      }`}>
+                        <span>TỔNG CỘNG:</span>
+                        <span>{order.totalAmount.toLocaleString('vi-VN')} đ</span>
+                      </div>
                     </div>
                   )}
-                  {printSettings.showVat && (
-                    <div className="flex justify-between">
-                      <span>Thuế VAT ({order.taxPercent}%):</span>
-                      <span>{order.taxAmount.toLocaleString('vi-VN')} đ</span>
-                    </div>
-                  )}
 
-                  <div className="flex justify-between font-bold text-sm pt-2 border-t border-black">
-                    <span>TỔNG CỘNG:</span>
-                    <span>{order.totalAmount.toLocaleString('vi-VN')} đ</span>
+                  {/* Footer */}
+                  <div className={`text-center border-t border-dashed border-gray-400 text-[10px] text-gray-700 ${
+                    printSettings.optimizeReceiptLength ? 'mt-1 pt-1 space-y-0' : 'mt-4 pt-2 space-y-1'
+                  }`}>
+                    <p>{printSettings.footerNote}</p>
+                    <p className="font-bold">Cảm ơn & Hẹn gặp lại quý khách!</p>
                   </div>
+
                 </div>
-              )}
-
-              {/* Footer */}
-              <div className="text-center mt-5 pt-3 border-t border-dashed border-gray-400 space-y-1 text-[10px] text-gray-700">
-                <p>{printSettings.footerNote}</p>
-                <p className="font-bold">Cảm ơn & Hẹn gặp lại quý khách!</p>
               </div>
-
-            </div>
           </div>
 
           {/* Action Buttons */}
