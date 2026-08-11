@@ -525,23 +525,14 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 pt-1">
-            <button
-              disabled={currentItems.length === 0}
-              onClick={() => activeOrder && onPrintKitchenTicket(activeOrder)}
-              className="w-full py-3 px-3 rounded-xl bg-slate-800 hover:bg-slate-900 disabled:opacity-40 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-1.5 transition"
-            >
-              <Printer className="w-4 h-4 text-white" />
-              <span>In Bếp / Bar</span>
-            </button>
-
+          <div className="pt-2">
             <button
               disabled={currentItems.length === 0}
               onClick={() => activeOrder && onOpenCheckout(activeOrder)}
-              className="w-full py-3 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-200 transition transform active:scale-95"
+              className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white font-extrabold text-sm uppercase tracking-wider flex items-center justify-center space-x-2 shadow-lg shadow-emerald-200 transition transform active:scale-95 cursor-pointer"
             >
-              <CreditCard className="w-4 h-4 stroke-[2.5]" />
-              <span>Thanh Toán</span>
+              <CreditCard className="w-5 h-5 stroke-[2.5]" />
+              <span>Thanh Toán Đơn Hàng</span>
             </button>
           </div>
 
