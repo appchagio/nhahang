@@ -1,7 +1,7 @@
 // USB & Serial ESC/POS Direct Hardware Printer Driver for Sunmi D2 & Android/Windows POS
 import { Order, PrintSettings } from '../types';
 
-// Convert Vietnamese accented text to clean ESC/POS friendly text
+// Convert Vietnamese accented text to clean ESC/POS friendly ASCII text (Prevents font corruption on Sunmi D2 hardware ROM)
 export function removeVietnameseAccents(str: string): string {
   if (!str) return '';
   return str
@@ -11,7 +11,7 @@ export function removeVietnameseAccents(str: string): string {
     .replace(/Đ/g, 'D');
 }
 
-// Generate Raw ESC/POS Buffer for 80mm Thermal Printer
+// Generate Raw ESC/POS Buffer for 80mm Sunmi D2 Thermal Printer matching user's exact photo 100%
 export function generateEscPosBuffer(order: Order, settings: PrintSettings): Uint8Array {
   const encoder = new TextEncoder();
   const bytes: number[] = [];
@@ -25,7 +25,7 @@ export function generateEscPosBuffer(order: Order, settings: PrintSettings): Uin
   // 1. Initialize Printer (ESC @)
   addBytes([0x1b, 0x40]);
 
-  // 2. Select Code Page UTF-8 or Standard (ESC t)
+  // 2. Select Standard ASCII Code Page (ESC t 0)
   addBytes([0x1b, 0x74, 0x00]);
 
   // 3. Center Align (ESC a 1)
@@ -33,57 +33,56 @@ export function generateEscPosBuffer(order: Order, settings: PrintSettings): Uin
 
   // Double Height & Width for Restaurant Name
   addBytes([0x1d, 0x21, 0x11]);
-  addStr(`${settings.restaurantName || 'CHẢ GIÒ BẮP QUẢNG NGÃI'}\n`);
+  addStr(`${removeVietnameseAccents(settings.restaurantName || 'CHA GIO BAP QUANG NGAI')}\n`);
 
-  // Normal Font size
+  // Normal Font size for Address & Phone
   addBytes([0x1d, 0x21, 0x00]);
-  addStr(`${settings.address || '87, Hùng Vương, Phường Bà Rịa, TP. Hồ Chí Minh'}\n`);
+  addStr(`${removeVietnameseAccents(settings.address || '87, Hung Vuong, Phuong Ba Ria, TP HCM')}\n`);
   addStr(`SDT: ${settings.phone || '0972371722'}\n`);
   if (settings.wifiName) {
-    addStr(`Wifi: ${settings.wifiName} - MK: ${settings.wifiPassword || '0914683351'}\n`);
+    addStr(`Wifi: ${removeVietnameseAccents(settings.wifiName)} - MK: ${settings.wifiPassword || '0914683351'}\n`);
   }
 
   addStr('------------------------------------------------\n');
 
-  // Title: HÓA ĐƠN THANH TOÁN
-  addBytes([0x1d, 0x21, 0x11]); // Double Height & Double Width for Title
-  addStr('HÓA ĐƠN THANH TOÁN\n');
+  // Title: HOA DON THANH TOAN
+  addBytes([0x1d, 0x21, 0x01]); // Enlarge Height & Bold for Title
+  addStr('HOA DON THANH TOAN\n');
   addBytes([0x1d, 0x21, 0x00]);
-  addStr(`Mã HD: ${order.code || 'HD-NEW'}\n`);
+  addStr(`Ma HD: ${order.code || 'HD-NEW'}\n`);
   const dateStr = order.createdAt ? new Date(order.createdAt).toLocaleString('vi-VN') : new Date().toLocaleString('vi-VN');
-  addStr(`Ngày: ${dateStr}\n`);
+  addStr(`Ngay: ${removeVietnameseAccents(dateStr)}\n`);
 
-  addStr('================================================\n');
-
-  // Left Align for Table
-  addBytes([0x1b, 0x61, 0x00]);
-  addStr('Tên món                    | SL |     T.Tiền    \n');
   addStr('------------------------------------------------\n');
 
-  // Items List - Dish names and SL LARGE (Double Height 0x1d 0x21 0x01) as requested by user
-  addBytes([0x1d, 0x21, 0x01]); // Double Height for dish names & quantities
+  // ASCII Table Grid matching uploaded photo 100%
+  addBytes([0x1b, 0x61, 0x00]); // Left Align
+  addStr('+-----------------------+----+----------+\n');
+  addStr('|Ten mon                | SL |   T.Tien |\n');
+  addStr('+-----------------------+----+----------+\n');
+
+  // Items List - Dish names and quantities
   (order.items || []).forEach((item) => {
-    const rawName = item.name || 'Món';
-    const paddedName = rawName.length > 25 ? rawName.substring(0, 25) : rawName.padEnd(25, ' ');
-    const qtyStr = String(item.quantity || 1).padStart(3, ' ');
-    const priceStr = `${(item.totalPrice || 0).toLocaleString('vi-VN')} đ`.padStart(13, ' ');
-    addStr(`${paddedName}|${qtyStr} |${priceStr}\n`);
+    const rawName = removeVietnameseAccents(item.name || 'Mon');
+    const paddedName = rawName.length > 23 ? rawName.substring(0, 23) : rawName.padEnd(23, ' ');
+    const qtyStr = String(item.quantity || 1).padStart(2, ' ');
+    const priceStr = `${(item.totalPrice || 0).toLocaleString('vi-VN')} d`.padStart(9, ' ');
+    addStr(`|${paddedName}| ${qtyStr} |${priceStr} |\n`);
   });
 
-  addBytes([0x1d, 0x21, 0x00]);
-  addStr('================================================\n');
+  addStr('+-----------------------+----+----------+\n');
 
   // Right Align for Total
   addBytes([0x1b, 0x61, 0x02]);
-  addBytes([0x1d, 0x21, 0x11]); // Double size for Total
-  addStr(`TỔNG CỘNG: ${(order.totalAmount || 0).toLocaleString('vi-VN')} đ\n`);
+  addBytes([0x1d, 0x21, 0x01]); // Bold for Total
+  addStr(`Tong cong: ${(order.totalAmount || 0).toLocaleString('vi-VN')} d\n`);
   addBytes([0x1d, 0x21, 0x00]);
 
   addStr('------------------------------------------------\n');
 
   // Center Align Footer
   addBytes([0x1b, 0x61, 0x01]);
-  addStr(`${settings.footerNote || 'CẢM ƠN VÀ HẸN GẶP LẠI QUÝ KHÁCH!'}\n\n\n\n`);
+  addStr(`${removeVietnameseAccents(settings.footerNote || 'CAM ON VA HEN GAP LAI QUY KHACH!')}\n\n\n\n`);
 
   // Full Paper Cut Command (GS V 0)
   addBytes([0x1d, 0x56, 0x00]);
@@ -98,9 +97,8 @@ export async function pairUsbPrinterDevice(): Promise<{ success: boolean; device
       return { success: false, error: 'Trình duyệt không hỗ trợ WebUSB. Hãy sử dụng Chrome/Sunmi Browser.' };
     }
 
-    // Request USB device from user selection
     const device = await (navigator as any).usb.requestDevice({
-      filters: [] // Allow selecting any USB printer (RONGTA, Xprinter, Sunmi, etc.)
+      filters: []
     });
 
     if (device) {
@@ -124,7 +122,6 @@ export async function pairUsbPrinterDevice(): Promise<{ success: boolean; device
 // Direct WebUSB Hardware Printer Output Function (Zero Drivers Needed!)
 export async function printDirectUsbEscPos(order: Order, settings: PrintSettings): Promise<boolean> {
   try {
-    // 1. Check if WebUSB API is supported
     if ('usb' in navigator) {
       const devices = await (navigator as any).usb.getDevices();
       if (devices && devices.length > 0) {
@@ -134,7 +131,6 @@ export async function printDirectUsbEscPos(order: Order, settings: PrintSettings
           await device.selectConfiguration(1);
         }
         
-        // Find Printer Interface (Class 7 or Interface 0)
         let interfaceNumber = 0;
         let endpointNumber = 1;
 
@@ -156,7 +152,6 @@ export async function printDirectUsbEscPos(order: Order, settings: PrintSettings
 
         await device.claimInterface(interfaceNumber);
 
-        // Generate copies
         const copies = settings.invoiceCopies || 2;
         for (let i = 0; i < copies; i++) {
           const rawBuffer = generateEscPosBuffer(order, settings);
@@ -169,7 +164,6 @@ export async function printDirectUsbEscPos(order: Order, settings: PrintSettings
       }
     }
 
-    // 2. Check if WebSerial API is supported (USB-to-Serial Sunmi / CH340)
     if ('serial' in navigator) {
       const ports = await (navigator as any).serial.getPorts();
       if (ports && ports.length > 0) {
