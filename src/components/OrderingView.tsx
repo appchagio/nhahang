@@ -639,10 +639,10 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
                 <p className="text-[1.2em] font-black uppercase text-black">(LIÊN {copyIdx + 1})</p>
               </div>
 
-              {/* HTML GRID TABLE WITH TIMES NEW ROMAN FONT */}
-              <table className="w-full border-collapse border-2 border-black text-black font-serif my-2 select-none" style={{ fontFamily: '"Times New Roman", Times, Georgia, serif' }}>
+              {/* HTML GRID TABLE MATCHING USER'S EXACT DRAWING 100% */}
+              <table className="w-full border-collapse border-2 border-black text-black font-sans my-2 select-none">
                 <thead>
-                  <tr className="border-b-2 border-black font-normal text-[1.1em]">
+                  <tr className="border-b-2 border-black font-normal text-[1.0em]">
                     <th className="border-r-2 border-black p-1 w-[45%] text-center font-normal">Ten mon</th>
                     <th className="border-r-2 border-black p-1 w-[15%] text-center font-normal">SL</th>
                     <th className="p-1 w-[40%] text-center font-normal">T.Tien</th>
@@ -650,13 +650,19 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
                 </thead>
                 <tbody>
                   {(orderForPrinting.items || []).map((item, idx) => (
-                    <tr key={idx} className="border-b-2 border-black text-[1.5em] font-black">
-                      <td className="border-r-2 border-black p-1 text-left font-black leading-tight">{item?.name || 'Món'}</td>
-                      <td className="border-r-2 border-black p-1 text-center font-black">{item?.quantity || 1}</td>
-                      <td className="p-1 text-right font-black">{(item?.totalPrice || 0).toLocaleString('vi-VN')} đ</td>
+                    <tr key={idx} className="border-b-2 border-black text-[1.55em] font-black uppercase">
+                      <td className="border-r-2 border-black p-1 text-left font-black leading-tight tracking-tight uppercase">
+                        {removeVietnameseAccents(item?.name || 'MON').toUpperCase()}
+                      </td>
+                      <td className="border-r-2 border-black p-1 text-center font-black">
+                        {item?.quantity || 1}
+                      </td>
+                      <td className="p-1 text-right font-black">
+                        {(item?.totalPrice || 0).toLocaleString('vi-VN')} đ
+                      </td>
                     </tr>
                   ))}
-                  <tr className="text-[1.5em]">
+                  <tr className="text-[1.55em]">
                     <td className="border-r-2 border-black p-1"></td>
                     <td className="border-r-2 border-black p-1 text-right font-normal text-[0.8em] align-middle">Tổng</td>
                     <td className="p-1 text-right font-black text-[1.1em]">{(orderForPrinting.totalAmount || 0).toLocaleString('vi-VN')}</td>
