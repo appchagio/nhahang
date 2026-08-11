@@ -55,25 +55,30 @@ export function generateEscPosBuffer(order: Order, settings: PrintSettings): Uin
 
   addStr('------------------------------------------------\n');
 
-  // ASCII Table Grid matching uploaded photo 100% with solid cell borders for every dish item
+  // ASCII Table Grid matching uploaded photo 100% with SL column first
   addBytes([0x1b, 0x61, 0x00]); // Left Align
-  addStr('+-----------------------+----+----------+\n');
-  addStr('|Ten mon                | SL |   T.Tien |\n');
-  addStr('+-----------------------+----+----------+\n');
+  addStr('+----+-----------------------+----------+\n');
+  addStr('| SL |Ten mon                |   T.Tien |\n');
+  addStr('+----+-----------------------+----------+\n');
 
-  // Items List - Super Bold & Large Uppercase Dish Names with Solid Line Separator for Each Item
+  // Items List - SL column first, Super Bold Uppercase Dish Names with Solid Line Separators
   (order.items || []).forEach((item) => {
     const rawName = removeVietnameseAccents(item.name || 'MON').toUpperCase();
     const paddedName = rawName.length > 23 ? rawName.substring(0, 23) : rawName.padEnd(23, ' ');
     const qtyStr = String(item.quantity || 1).padStart(2, ' ');
     const priceStr = `${(item.totalPrice || 0).toLocaleString('vi-VN')} d`.padStart(9, ' ');
 
-    addBytes([0x1d, 0x21, 0x00]); // Standard height & width font (60% size of double height)
-    addBytes([0x1b, 0x45, 0x01]); // ESC E 1: Bold text
-    addStr(`|${paddedName}| ${qtyStr} |${priceStr} |\n`);
+    addBytes([0x1d, 0x21, 0x01]); // Double Height for SL and Dish Name
+    addBytes([0x1b, 0x45, 0x01]); // Bold text
+    addStr(`| ${qtyStr} |${paddedName}|${priceStr} |\n`);
+    addBytes([0x1d, 0x21, 0x00]); // Reset font size
     addBytes([0x1b, 0x45, 0x00]); // Reset bold
-    addStr('+-----------------------+----+----------+\n'); // Solid Cell Border Line for each dish!
+    addStr('+----+-----------------------+----------+\n'); // Solid Cell Border Line for each dish!
   });
+
+  // Total Row spanning columns
+  addStr(`|        Tong                |${(`${(order.totalAmount || 0).toLocaleString('vi-VN')} d`).padStart(10, ' ')}|\n`);
+  addStr('+----+-----------------------+----------+\n');
 
   // Right Align for Total
   addBytes([0x1b, 0x61, 0x02]);
