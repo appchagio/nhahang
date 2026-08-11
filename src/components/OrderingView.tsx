@@ -10,7 +10,7 @@ import {
   PaymentMethod
 } from '../types';
 import { calculateOrderSummary, createOrderItem } from '../services/calcEngine';
-import { printDirectUsbEscPos, removeVietnameseAccents } from '../services/usbPrinterService';
+import { printDirectUsbEscPos, pairUsbPrinterDevice, removeVietnameseAccents } from '../services/usbPrinterService';
 import {
   Search,
   Plus,
@@ -212,11 +212,10 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
     }
   };
 
-  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT (SUNMI D2 DIRECT USB + BROWSER FALLBACK)
+  // ONE-TOUCH DIRECT CHECKOUT & DIRECT USB ESC/POS PRINT TO RONGTA RP355UL (ZERO POPUPS/PREVIEWS!)
   const handleDirectCheckoutAndPrint = async () => {
     if (!activeOrder || currentItems.length === 0) return;
 
-    const copies = printSettings?.invoiceCopies || 2;
     // Snapshot current order safely
     const orderSnapshot: Order = JSON.parse(JSON.stringify(activeOrder));
     setLastPaidOrderForPrint(orderSnapshot);
@@ -226,27 +225,24 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
       onConfirmPayment(orderSnapshot.id, 'CASH');
     }
 
-    // 2. Try Direct USB ESC/POS Hardware Printing (Sunmi D2 Direct USB / WebUSB / WebSerial - No Driver Needed)
-    const printedDirectUsb = await printDirectUsbEscPos(orderSnapshot, printSettings || {});
+    // 2. Direct Hardware USB ESC/POS Printing to Rongta RP355UL (SILENT DIRECT HARDWARE OUTPUT - ZERO OS POPUPS)
+    await printDirectUsbEscPos(orderSnapshot, printSettings || {});
 
-    // 3. Fallback to Window Print if Direct USB output is not active
-    if (!printedDirectUsb) {
-      setTimeout(() => {
-        window.print();
-      }, 100);
-    }
-
-    // 4. Clear Cart & Reset for next sale
+    // 3. Clear Cart & Reset for next sale immediately
     saveCurrentOrderWithItems([]);
-
-    // 5. Show Notification Toast
-    setSuccessToast(`✔ Thanh Toán Thành Công! Máy in USB Sunmi D2 đang tự động in ${copies} bill.`);
-    setTimeout(() => {
-      setSuccessToast(null);
-    }, 3500);
+    setSuccessToast(`✔ Thanh Toán Thành Công! Máy in Rongta RP355UL (USB) tự động in hoá đơn.`);
+    setTimeout(() => setSuccessToast(null), 3000);
   };
 
-  const toggleToppingSelection = (optionTitle: string, topping: ToppingOption) => {
+  const handlePairUsbPrinter = async () => {
+    const res = await pairUsbPrinterDevice();
+    if (res.success) {
+      setSuccessToast(`✔ Đã kết nối và lưu máy in USB: ${res.deviceName || 'Rongta RP355UL'}!`);
+      setTimeout(() => setSuccessToast(null), 3500);
+    } else if (res.error) {
+      alert(`Thắc mắc kết nối USB: ${res.error}`);
+    }
+  };
     if (!topping) return;
     const exists = selectedToppings.some(
       (t) => t.optionTitle === optionTitle && t.topping?.id === topping.id
@@ -297,10 +293,14 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
               />
             </div>
 
-            <div className="hidden sm:flex items-center space-x-1.5 text-[11px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1.5 rounded-lg shrink-0 font-bold">
-              <Zap className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-              <span>Tự Động Nhận & Lưu Máy In USB ({printSettings?.usbDeviceName || 'Máy in USB POS'})</span>
-            </div>
+            <button
+              onClick={handlePairUsbPrinter}
+              title="Nhấn vào đây để ghép nối và cấp quyền cổng USB cho máy in Rongta RP355UL"
+              className="hidden sm:flex items-center space-x-1.5 text-[11px] font-mono text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 px-2.5 py-1.5 rounded-lg shrink-0 font-bold transition cursor-pointer active:scale-95 shadow-sm"
+            >
+              <Zap className="w-3.5 h-3.5 text-emerald-600 shrink-0 animate-pulse" />
+              <span>🟢 KHÔNG HIỆN POPUP: Máy in USB ({printSettings?.usbDeviceName || 'Rongta RP355UL'})</span>
+            </button>
           </div>
 
           <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none">
