@@ -329,7 +329,7 @@ export const INITIAL_PRINT_SETTINGS: PrintSettings = {
   tempPaperSize: 'K80',
   shiftPaperSize: 'K80',
   connectionType: 'USB',
-  usbDeviceName: 'Máy In USB POS (a5c:5843)',
+  usbDeviceName: 'Rongta RP355UL 80mm Thermal Printer',
   lanIpAddress: '192.168.1.200',
   fontSizePx: 26,
   invoiceCopies: 2,
