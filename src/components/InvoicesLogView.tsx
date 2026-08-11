@@ -1,3 +1,4 @@
+// InvoicesLogView Component
 import React, { useState } from 'react';
 import { Order, PrintSettings } from '../types';
 import {
