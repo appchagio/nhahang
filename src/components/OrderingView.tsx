@@ -684,14 +684,6 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
                       </td>
                     </tr>
                   ))}
-                  <tr className="text-[1.55em]">
-                    <td colSpan={2} className="border-r-2 border-black p-1 text-center font-normal text-[0.9em] align-middle">
-                      Tổng
-                    </td>
-                    <td className="p-1 text-right font-black text-[1.1em]">
-                      {(orderForPrinting.totalAmount || 0).toLocaleString('vi-VN')}
-                    </td>
-                  </tr>
                 </tbody>
               </table>
 
