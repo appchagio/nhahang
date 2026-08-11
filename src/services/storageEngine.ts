@@ -195,6 +195,22 @@ export class POSStorageEngine {
     localStorage.setItem(STORAGE_KEYS.PERMANENT_REVENUE, JSON.stringify(records));
   }
 
+  // Delete permanent revenue by month (e.g. "2026-08")
+  static deleteRevenueByMonth(yearMonthStr: string): PermanentRevenueAggregate[] {
+    const records = this.getPermanentRevenue();
+    const updated = records.filter((r) => !r.date.startsWith(yearMonthStr));
+    this.savePermanentRevenue(updated);
+    return updated;
+  }
+
+  // Delete permanent revenue by year (e.g. "2026")
+  static deleteRevenueByYear(yearStr: string): PermanentRevenueAggregate[] {
+    const records = this.getPermanentRevenue();
+    const updated = records.filter((r) => !r.date.startsWith(yearStr));
+    this.savePermanentRevenue(updated);
+    return updated;
+  }
+
   // Get Print Settings
   static getPrintSettings(): PrintSettings {
     const raw = localStorage.getItem(STORAGE_KEYS.PRINT_SETTINGS);
