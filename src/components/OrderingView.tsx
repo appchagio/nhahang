@@ -639,13 +639,13 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
                 <p className="text-[1.2em] font-black uppercase text-black">(LIÊN {copyIdx + 1})</p>
               </div>
 
-              {/* HTML GRID TABLE WITH FULL ACCENTS AND LARGE DISH NAMES & SL (1.5em font-black) */}
+              {/* HTML GRID TABLE MATCHING USER'S IMAGE FONT 100% */}
               <table className="w-full border-collapse border-2 border-black text-black font-sans my-2 select-none">
                 <thead>
                   <tr className="border-b-2 border-black font-normal text-[1.1em]">
-                    <th className="border-r-2 border-black p-1 w-[45%] text-center font-normal">Tên món</th>
+                    <th className="border-r-2 border-black p-1 w-[45%] text-center font-normal">Ten mon</th>
                     <th className="border-r-2 border-black p-1 w-[15%] text-center font-normal">SL</th>
-                    <th className="p-1 w-[40%] text-center font-normal">T.Tiền</th>
+                    <th className="p-1 w-[40%] text-center font-normal">T.Tien</th>
                   </tr>
                 </thead>
                 <tbody>
