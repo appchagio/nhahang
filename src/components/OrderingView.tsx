@@ -651,13 +651,13 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
                 <tbody>
                   {(orderForPrinting.items || []).map((item, idx) => (
                     <tr key={idx} className="border-b-2 border-black font-black uppercase">
-                      <td className="border-r-2 border-black p-1 text-left font-black text-[0.85em] uppercase tracking-tight font-sans leading-tight">
+                      <td className="border-r-2 border-black p-1 text-left font-black text-[0.85em] uppercase tracking-tight font-sans leading-tight align-middle">
                         {removeVietnameseAccents(item?.name || 'MON').toUpperCase()}
                       </td>
-                      <td className="border-r-2 border-black p-1 text-center font-black text-[1.25em] leading-none">
+                      <td className="border-r-2 border-black p-1 text-center font-black text-[1.85em] leading-none align-middle">
                         {item?.quantity || 1}
                       </td>
-                      <td className="p-1 text-right font-black text-[0.9em]">
+                      <td className="p-1 text-right font-black text-[0.9em] align-middle">
                         {(item?.totalPrice || 0).toLocaleString('vi-VN')} đ
                       </td>
                     </tr>
