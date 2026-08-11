@@ -1,7 +1,7 @@
-// USB & Serial ESC/POS Direct Hardware Printer Driver for Sunmi D2 & Android/Windows POS
+// USB & Serial ESC/POS Direct Hardware Printer Driver for Rongta RP355UL & Sunmi D2 POS
 import { Order, PrintSettings } from '../types';
 
-// Convert Vietnamese accented text to clean ESC/POS friendly ASCII text (Prevents font corruption on Sunmi D2 hardware ROM)
+// Convert Vietnamese accented text to clean ESC/POS friendly ASCII text (Prevents font corruption on Rongta RP355UL / Sunmi D2 hardware ROM)
 export function removeVietnameseAccents(str: string): string {
   if (!str) return '';
   return str
@@ -11,7 +11,7 @@ export function removeVietnameseAccents(str: string): string {
     .replace(/Đ/g, 'D');
 }
 
-// Generate Raw ESC/POS Buffer for 80mm Sunmi D2 Thermal Printer matching user's exact photo 100%
+// Generate Raw ESC/POS Buffer for 80mm Rongta RP355UL Thermal Printer matching user's exact photo 100%
 export function generateEscPosBuffer(order: Order, settings: PrintSettings): Uint8Array {
   const encoder = new TextEncoder();
   const bytes: number[] = [];
@@ -91,26 +91,35 @@ export function generateEscPosBuffer(order: Order, settings: PrintSettings): Uin
   addBytes([0x1b, 0x61, 0x01]);
   addStr(`${removeVietnameseAccents(settings.footerNote || 'CAM ON VA HEN GAP LAI QUY KHACH!')}\n\n\n\n`);
 
-  // Full Paper Cut Command (GS V 0)
+  // Full Paper Cut Command for Rongta RP355UL (GS V 0)
   addBytes([0x1d, 0x56, 0x00]);
 
   return new Uint8Array(bytes);
 }
 
-// Request and Save WebUSB Device Permission (Direct USB Sunmi D2 / RONGTA)
+// Request and Pair WebUSB Rongta RP355UL Thermal Printer Device
 export async function pairUsbPrinterDevice(): Promise<{ success: boolean; deviceName?: string; error?: string }> {
   try {
     if (!('usb' in navigator)) {
-      return { success: false, error: 'Trình duyệt không hỗ trợ WebUSB. Hãy sử dụng Chrome/Sunmi Browser.' };
+      return { success: false, error: 'Trình duyệt không hỗ trợ WebUSB. Hãy sử dụng Chrome / Sunmi Browser.' };
     }
 
     const device = await (navigator as any).usb.requestDevice({
-      filters: []
+      filters: [
+        { vendorId: 0x0fe6 }, // Rongta Tech Vendor ID
+        { vendorId: 0x04b8 }, // Epson / Generic POS
+        { vendorId: 0x0483 }, // STMicroelectronics POS
+        { vendorId: 0x1a86 }, // CH340 USB Serial
+      ]
+    }).catch(() => {
+      // Fallback request without filters
+      return (navigator as any).usb.requestDevice({ filters: [] });
     });
 
     if (device) {
       localStorage.setItem('sunmi_usb_printer_paired', 'true');
       localStorage.setItem('sunmi_usb_vendor_id', String(device.vendorId));
+      localStorage.setItem('rongta_rp355ul_connected', 'true');
 
       try {
         if (!device.opened) await device.open();
@@ -121,18 +130,18 @@ export async function pairUsbPrinterDevice(): Promise<{ success: boolean; device
 
       return {
         success: true,
-        deviceName: `${device.productName || 'Máy in USB POS'} (VendorID: ${device.vendorId.toString(16)})`
+        deviceName: `Máy in Rongta RP355UL (USB VendorID: ${device.vendorId.toString(16)})`
       };
     }
 
-    return { success: false, error: 'Không tìm thấy thiết bị USB.' };
+    return { success: false, error: 'Không tìm thấy thiết bị USB Rongta RP355UL.' };
   } catch (err: any) {
     console.warn('Pair WebUSB printer error:', err);
     return { success: false, error: err.message || 'Lỗi ghép nối USB' };
   }
 }
 
-// Safe Helper to Connect USB Device (Auto handles power reboots & app restarts)
+// Safe Helper to Connect Rongta RP355UL USB Device
 async function connectAndClaimUsbDevice(device: any): Promise<{ interfaceNumber: number; endpointNumber: number }> {
   if (!device.opened) {
     await device.open();
@@ -163,37 +172,38 @@ async function connectAndClaimUsbDevice(device: any): Promise<{ interfaceNumber:
   try {
     await device.claimInterface(interfaceNumber);
   } catch (e) {
-    // Already claimed or re-bound, proceed safely
-    console.log('USB interface notice:', e);
+    console.log('USB interface claim notice:', e);
   }
 
   return { interfaceNumber, endpointNumber };
 }
 
-// Initialize Automatic Background Reconnection Event Listeners
+// Initialize Instant Automatic Background Reconnection to Rongta RP355UL USB Printer
 export function initAutoUsbPrinterReconnection(): void {
   if (typeof window === 'undefined' || !('usb' in navigator)) return;
 
-  // Auto-bind when printer is turned back ON or USB cable re-plugged
+  // Auto-bind when Rongta RP355UL printer is powered ON or USB cable plugged in
   (navigator as any).usb.addEventListener('connect', async (event: any) => {
-    console.log('USB Printer plugged in or powered ON:', event.device);
+    console.log('Rongta RP355UL Printer plugged in / powered ON:', event.device);
     try {
       if (event.device) {
         await connectAndClaimUsbDevice(event.device);
         localStorage.setItem('sunmi_usb_printer_paired', 'true');
+        localStorage.setItem('rongta_rp355ul_connected', 'true');
       }
     } catch (err) {
       console.warn('Auto USB connect handler notice:', err);
     }
   });
 
-  // Auto connect paired devices on startup
+  // Auto connect paired devices instantly on startup
   (navigator as any).usb.getDevices().then((devices: any[]) => {
     if (devices && devices.length > 0) {
       devices.forEach(async (device) => {
         try {
           await connectAndClaimUsbDevice(device);
           localStorage.setItem('sunmi_usb_printer_paired', 'true');
+          localStorage.setItem('rongta_rp355ul_connected', 'true');
         } catch (e) {
           console.log('Startup USB auto-connect notice:', e);
         }
@@ -204,11 +214,11 @@ export function initAutoUsbPrinterReconnection(): void {
   });
 }
 
-// Direct WebUSB Hardware Printer Output Function with 100% Persistent Auto-Reconnect & Auto-Retry!
+// Direct WebUSB Hardware Printer Output Function for Rongta RP355UL (Zero Prompts Needed!)
 export async function printDirectUsbEscPos(order: Order, settings: PrintSettings): Promise<boolean> {
   const maxRetries = 2;
 
-  // Attempt WebUSB Auto-Reconnect & Direct Print
+  // 1. Attempt WebUSB Direct Hardware Output to Rongta RP355UL
   if ('usb' in navigator) {
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
@@ -231,16 +241,16 @@ export async function printDirectUsbEscPos(order: Order, settings: PrintSettings
             // Ignore close notice
           }
 
-          return true; // Printing successful!
+          return true; // Printing to Rongta RP355UL successful!
         }
       } catch (err) {
-        console.warn(`WebUSB Print attempt ${attempt + 1} failed, auto-retrying...`, err);
-        await new Promise((res) => setTimeout(res, 300));
+        console.warn(`Rongta RP355UL Print attempt ${attempt + 1} failed, retrying...`, err);
+        await new Promise((res) => setTimeout(res, 200));
       }
     }
   }
 
-  // Attempt WebSerial Auto-Reconnect
+  // 2. Attempt WebSerial Output
   if ('serial' in navigator) {
     try {
       const ports = await (navigator as any).serial.getPorts();
