@@ -89,21 +89,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <UtensilsCrossed className="w-4 h-4" />
-              <span className="hidden md:inline">Gọi món (One-Touch)</span>
+              <span className="hidden md:inline">Bán Hàng Mang Về</span>
               <span className="md:hidden">Order</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('TABLES')}
-              className={`flex items-center space-x-2 px-3.5 py-2 rounded-lg font-medium text-sm transition-all duration-150 ${
-                activeTab === 'TABLES'
-                  ? 'bg-blue-600 text-white shadow-sm font-semibold'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200 bg-white'
-              }`}
-            >
-              <LayoutGrid className="w-4 h-4" />
-              <span className="hidden md:inline">Sơ đồ Bàn</span>
-              <span className="md:hidden">Bàn</span>
             </button>
 
             <button
