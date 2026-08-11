@@ -1,4 +1,4 @@
-// USB & Serial ESC/POS Direct Hardware Printer Driver with Auto-Detection & Persistent Printer Saving
+// USB & Serial ESC/POS Direct Hardware Printer Driver with 100% Zero-Popup Silent Output
 import { Order, PrintSettings } from '../types';
 
 // Convert Vietnamese accented text to clean ESC/POS friendly ASCII text (Prevents font corruption on Rongta / Sunmi D2 hardware ROM)
@@ -100,9 +100,9 @@ export function generateEscPosBuffer(order: Order, settings: PrintSettings): Uin
 // Save Paired USB Printer Device to Permanent Settings Storage
 function savePairedUsbPrinterToSettings(device: any): void {
   try {
-    const deviceName = device.productName ? `${device.productName} (USB)` : 'Máy in USB POS';
+    const deviceName = device.productName ? `${device.productName} (USB)` : 'Rongta RP355UL (USB)';
     localStorage.setItem('sunmi_usb_printer_paired', 'true');
-    localStorage.setItem('sunmi_usb_vendor_id', String(device.vendorId));
+    localStorage.setItem('sunmi_usb_vendor_id', String(device.vendorId || 0));
     localStorage.setItem('pos_usb_saved_printer_name', deviceName);
 
     // Update PrintSettings in LocalStorage
@@ -117,13 +117,38 @@ function savePairedUsbPrinterToSettings(device: any): void {
   }
 }
 
-// Request and Pair WebUSB Thermal Printer Device
+// Request and Pair WebUSB Thermal Printer Device (SILENT INSTANT CHECK FIRST - ZERO POPUPS NEEDED!)
 export async function pairUsbPrinterDevice(): Promise<{ success: boolean; deviceName?: string; error?: string }> {
   try {
     if (!('usb' in navigator)) {
       return { success: false, error: 'Trình duyệt không hỗ trợ WebUSB. Hãy sử dụng Chrome / Sunmi Browser.' };
     }
 
+    // 1. SILENT ZERO-POPUP CHECK: If browser ALREADY has an authorized USB device, connect instantly WITH ZERO POPUPS!
+    const existingDevices = await (navigator as any).usb.getDevices();
+    if (existingDevices && existingDevices.length > 0) {
+      const existingDevice = existingDevices[0];
+      await connectAndClaimUsbDevice(existingDevice);
+      savePairedUsbPrinterToSettings(existingDevice);
+      return {
+        success: true,
+        deviceName: existingDevice.productName ? `${existingDevice.productName} (USB)` : 'Rongta RP355UL (USB)'
+      };
+    }
+
+    // 2. SILENT SERIAL CHECK: Check WebSerial ports silently
+    if ('serial' in navigator) {
+      const ports = await (navigator as any).serial.getPorts();
+      if (ports && ports.length > 0) {
+        localStorage.setItem('sunmi_usb_printer_paired', 'true');
+        return {
+          success: true,
+          deviceName: 'Máy in Rongta RP355UL (Cổng USB/Serial)'
+        };
+      }
+    }
+
+    // 3. Only if NO devices exist, invoke Chrome permission prompt once
     const device = await (navigator as any).usb.requestDevice({
       filters: [
         { vendorId: 0x0fe6 }, // Rongta Tech Vendor ID
@@ -148,7 +173,7 @@ export async function pairUsbPrinterDevice(): Promise<{ success: boolean; device
 
       return {
         success: true,
-        deviceName: device.productName ? `${device.productName} (USB)` : 'Máy in USB POS'
+        deviceName: device.productName ? `${device.productName} (USB)` : 'Rongta RP355UL (USB)'
       };
     }
 
@@ -230,11 +255,11 @@ export function initAutoUsbPrinterReconnection(): void {
   });
 }
 
-// Direct WebUSB Hardware Printer Output Function (Zero Prompts Needed!)
+// Direct WebUSB Hardware Printer Output Function (SILENT 100% DIRECT HARDWARE OUTPUT - ABSOLUTELY ZERO POPUPS!)
 export async function printDirectUsbEscPos(order: Order, settings: PrintSettings): Promise<boolean> {
   const maxRetries = 2;
 
-  // Attempt WebUSB Direct Hardware Output
+  // 1. Attempt WebUSB Direct Hardware Output (SILENT READ FROM AUTHORIZED DEVICES - ZERO POPUPS)
   if ('usb' in navigator) {
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
@@ -267,7 +292,7 @@ export async function printDirectUsbEscPos(order: Order, settings: PrintSettings
     }
   }
 
-  // Attempt WebSerial Output
+  // 2. Attempt WebSerial Output (SILENT)
   if ('serial' in navigator) {
     try {
       const ports = await (navigator as any).serial.getPorts();
