@@ -319,93 +319,88 @@ export const BillingPrintModal: React.FC<BillingPrintModalProps> = ({
             >
               
               {/* Header */}
-              <div className={`text-center border-b border-dashed border-gray-400 ${
-                optimizeLength ? 'pb-1 space-y-0' : 'pb-2 space-y-0.5'
-              }`}>
-                <h4 className="font-bold text-sm tracking-tight">{printSettings.restaurantName}</h4>
-                <p className="text-[10px] text-gray-700">{printSettings.address}</p>
-                <p className="text-[10px] text-gray-700">SĐT: {printSettings.phone}</p>
+              <div className="text-center space-y-0.5 border-b border-dashed border-gray-400 pb-1.5">
+                <h4 className="font-extrabold text-sm tracking-wider uppercase">{printSettings.restaurantName || 'CHA GIO BAP QUANG NGAI'}</h4>
+                <p className="text-[10px] text-gray-800">{printSettings.address || '87, Hung Vuong, Phuong Ba Ria, TP HCM'}</p>
+                <p className="text-[10px] text-gray-800 font-bold">SDT: {printSettings.phone || '0972371722'}</p>
+                {printSettings.wifiName && (
+                  <p className="text-[10px] text-gray-800 font-medium">Wifi: {printSettings.wifiName} - MK: {printSettings.wifiPassword || '0914683351'}</p>
+                )}
               </div>
 
-              {/* Invoice Title & Compact Header */}
-              <div className={`text-center ${optimizeLength ? 'my-1 space-y-0' : 'my-2 space-y-0.5'}`}>
-                <h3 className="font-extrabold text-sm uppercase">
-                  {mode === 'KITCHEN_TICKET' ? 'PHIẾU IN BẾP / BAR' : 'HÓA ĐƠN THANH TOÁN'}
+              {/* Invoice Title */}
+              <div className="text-center my-1.5 space-y-0.5">
+                <h3 className="font-extrabold text-sm uppercase tracking-tight">
+                  {mode === 'KITCHEN_TICKET' ? 'PHIẾU IN BẾP / BAR' : 'HOA DON THANH TOAN'}
                 </h3>
-                <p className="text-[11px] font-bold text-gray-800">
-                  Bàn: {order.tableName} • Mã HD: {order.code}
-                </p>
-                <p className="text-[10px] text-gray-500 font-mono">
-                  {new Date().toLocaleString('vi-VN')}
+                <p className="text-[11px] font-mono text-gray-800">Ma HD: {order.code}</p>
+                <p className="text-[10px] font-mono text-gray-600">
+                  Ngay: {new Date(order.createdAt).toLocaleTimeString('vi-VN')} {new Date(order.createdAt).toLocaleDateString('vi-VN')}
                 </p>
               </div>
 
-              {/* Items List Table */}
-              <div className={`border-t border-b border-dashed border-gray-400 text-[11px] ${
-                optimizeLength ? 'py-1 my-1 space-y-0.5' : 'py-2 my-2 space-y-1'
-              }`}>
-                <div className="flex justify-between font-bold border-b border-gray-300 pb-0.5">
-                  <span>Món</span>
-                  <span>SL x Giá</span>
-                </div>
-
-                {order.items.map((item, idx) => (
-                  <div key={idx} className="space-y-0">
-                    <div className="flex justify-between font-bold">
-                      <span className="line-clamp-1">{item.name}</span>
-                      <span>{item.quantity} x {item.unitPrice.toLocaleString('vi-VN')}</span>
-                    </div>
-
-                    {item.selectedToppings && item.selectedToppings.length > 0 && (
-                      <div className="pl-2 text-[10px] text-gray-600">
-                        {item.selectedToppings.map((st, i) => (
-                          <p key={i}>+ {st.topping?.name || 'Topping'}</p>
-                        ))}
-                      </div>
-                    )}
-
-                    {item.note && (
-                      <p className="pl-2 text-[10px] text-gray-600 italic">Ghi chú: {item.note}</p>
-                    )}
+              {/* Items List Table (Ascii Grid Table matching uploaded photo) */}
+              {printSettings.useAsciiGridTable ? (
+                <div className="my-1.5 font-mono text-[11px] leading-tight select-none">
+                  <div className="text-gray-400 text-[10px] truncate">+-----------------------+----+----------+</div>
+                  <div className="flex font-bold justify-between border-y border-gray-400 py-0.5 px-0.5">
+                    <span className="w-1/2 truncate">|Ten mon</span>
+                    <span className="w-1/6 text-center">| SL |</span>
+                    <span className="w-1/3 text-right">T.Tien |</span>
                   </div>
-                ))}
-              </div>
+                  <div className="text-gray-400 text-[10px] truncate">+-----------------------+----+----------+</div>
+
+                  {order.items.map((item, idx) => (
+                    <div key={idx} className="flex justify-between items-center py-0.5 px-0.5 border-b border-dashed border-gray-300 font-bold">
+                      <span className="w-1/2 truncate">|{item.name}</span>
+                      <span className="w-1/6 text-center">| {item.quantity} |</span>
+                      <span className="w-1/3 text-right">{item.totalPrice.toLocaleString('vi-VN')} d |</span>
+                    </div>
+                  ))}
+                  <div className="text-gray-400 text-[10px] truncate">+-----------------------+----+----------+</div>
+                </div>
+              ) : (
+                <div className={`border-t border-b border-dashed border-gray-400 text-[11px] ${
+                  optimizeLength ? 'py-1 my-1 space-y-0.5' : 'py-2 my-2 space-y-1'
+                }`}>
+                  <div className="flex justify-between font-bold border-b border-gray-300 pb-0.5">
+                    <span>Món</span>
+                    <span>SL x Giá</span>
+                  </div>
+
+                  {order.items.map((item, idx) => (
+                    <div key={idx} className="space-y-0">
+                      <div className="flex justify-between font-bold">
+                        <span className="line-clamp-1">{item.name}</span>
+                        <span>{item.quantity} x {item.unitPrice.toLocaleString('vi-VN')}</span>
+                      </div>
+
+                      {item.selectedToppings && item.selectedToppings.length > 0 && (
+                        <div className="pl-2 text-[10px] text-gray-600">
+                          {item.selectedToppings.map((st, i) => (
+                            <p key={i}>+ {st.topping?.name || 'Topping'}</p>
+                          ))}
+                        </div>
+                      )}
+
+                      {item.note && (
+                        <p className="pl-2 text-[10px] text-gray-600 italic">Ghi chú: {item.note}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Summary calculations */}
               {mode !== 'KITCHEN_TICKET' && (
-                <div className={`text-[11px] ${optimizeLength ? 'space-y-0.5 pt-0.5' : 'space-y-1 pt-1'}`}>
-                  <div className="flex justify-between">
-                    <span>Tạm tính:</span>
-                    <span>{order.subtotal.toLocaleString('vi-VN')} đ</span>
-                  </div>
-                  {order.discountAmount > 0 && (
-                    <div className="flex justify-between">
-                      <span>Giảm giá ({order.discountPercent}%):</span>
-                      <span>-{order.discountAmount.toLocaleString('vi-VN')} đ</span>
-                    </div>
-                  )}
-                  {printSettings.showVat && (
-                    <div className="flex justify-between">
-                      <span>Thuế VAT ({order.taxPercent}%):</span>
-                      <span>{order.taxAmount.toLocaleString('vi-VN')} đ</span>
-                    </div>
-                  )}
-
-                  <div className={`flex justify-between font-bold text-sm border-t border-black ${
-                    optimizeLength ? 'pt-1 mt-1' : 'pt-2 mt-2'
-                  }`}>
-                    <span>TỔNG CỘNG:</span>
-                    <span>{order.totalAmount.toLocaleString('vi-VN')} đ</span>
-                  </div>
+                <div className="text-right pt-1 font-extrabold text-sm border-t border-black mt-1">
+                  <span>Tong cong: {order.totalAmount.toLocaleString('vi-VN')} d</span>
                 </div>
               )}
 
               {/* Footer */}
-              <div className={`text-center border-t border-dashed border-gray-400 text-[10px] text-gray-700 ${
-                optimizeLength ? 'mt-1 pt-1 space-y-0' : 'mt-4 pt-2 space-y-1'
-              }`}>
-                <p>{printSettings.footerNote}</p>
-                <p className="font-bold">Cảm ơn & Hẹn gặp lại quý khách!</p>
+              <div className="text-center mt-3 pt-1 border-t border-dashed border-gray-400 font-bold text-[10px] uppercase tracking-tight text-gray-800">
+                <p>{printSettings.footerNote || 'CAM ON VA HEN GAP LAI QUY KHACH!'}</p>
               </div>
 
             </div>
