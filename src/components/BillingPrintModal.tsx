@@ -320,9 +320,9 @@ export const BillingPrintModal: React.FC<BillingPrintModalProps> = ({
             >
               
               {/* Header */}
-              <div className="text-center space-y-0.5 border-b border-dashed border-gray-400 pb-1.5">
-                <h4 className="font-extrabold text-sm tracking-wider uppercase">{printSettings.restaurantName || 'CHA GIO BAP QUANG NGAI'}</h4>
-                <p className="text-[10px] text-gray-800">{printSettings.address || '87, Hung Vuong, Phuong Ba Ria, TP HCM'}</p>
+              <div className="text-center border-b border-dashed border-gray-400 pb-1 mb-1">
+                <h4 className="font-extrabold text-xs uppercase tracking-tight">{printSettings.restaurantName || 'CHẢ GIÒ BẮP QUẢNG NGÃI'}</h4>
+                <p className="text-[10px] text-gray-800">{printSettings.address || '87, Hùng Vương, Phường Bà Rịa, TP. Hồ Chí Minh'}</p>
                 <p className="text-[10px] text-gray-800 font-bold">SDT: {printSettings.phone || '0972371722'}</p>
                 {printSettings.wifiName && (
                   <p className="text-[10px] text-gray-800 font-medium">Wifi: {printSettings.wifiName} - MK: {printSettings.wifiPassword || '0914683351'}</p>
@@ -331,35 +331,35 @@ export const BillingPrintModal: React.FC<BillingPrintModalProps> = ({
 
               {/* Invoice Title */}
               <div className="text-center my-1.5 space-y-0.5">
-                <h3 className="font-extrabold text-sm uppercase tracking-tight">
-                  {mode === 'KITCHEN_TICKET' ? 'PHIẾU IN BẾP / BAR' : 'HOA DON THANH TOAN'}
+                <h3 className="font-black text-[1.5em] uppercase tracking-tight">
+                  {mode === 'KITCHEN_TICKET' ? 'PHIẾU IN BẾP / BAR' : 'HÓA ĐƠN THANH TOÁN'}
                 </h3>
-                <p className="text-[11px] font-mono text-gray-800">Ma HD: {order.code}</p>
+                <p className="text-[11px] font-mono text-gray-800">Mã HD: {order.code}</p>
                 <p className="text-[10px] font-mono text-gray-600">
-                  Ngay: {new Date(order.createdAt).toLocaleTimeString('vi-VN')} {new Date(order.createdAt).toLocaleDateString('vi-VN')}
+                  Ngày: {new Date(order.createdAt).toLocaleTimeString('vi-VN')} {new Date(order.createdAt).toLocaleDateString('vi-VN')}
                 </p>
               </div>
 
-              {/* Items List Table (HTML Grid Table matching uploaded image 100%) */}
+              {/* Items List Table (HTML Grid Table with full accents and large 1.5em font) */}
               <table className="w-full border-collapse border-2 border-black text-black font-sans my-2 select-none text-[11px]">
                 <thead>
                   <tr className="border-b-2 border-black font-normal">
-                    <th className="border-r-2 border-black p-1 w-[45%] text-center font-normal">Ten mon</th>
+                    <th className="border-r-2 border-black p-1 w-[45%] text-center font-normal">Tên món</th>
                     <th className="border-r-2 border-black p-1 w-[15%] text-center font-normal">SL</th>
-                    <th className="p-1 w-[40%] text-center font-normal">T.Tien</th>
+                    <th className="p-1 w-[40%] text-center font-normal">T.Tiền</th>
                   </tr>
                 </thead>
                 <tbody>
                   {(order.items || []).map((item, idx) => (
-                    <tr key={idx} className="border-b-2 border-black text-[1.35em] font-black">
+                    <tr key={idx} className="border-b-2 border-black text-[1.5em] font-black">
                       <td className="border-r-2 border-black p-1 text-left font-black leading-tight">{item?.name || 'Món'}</td>
                       <td className="border-r-2 border-black p-1 text-center font-black">{item?.quantity || 1}</td>
                       <td className="p-1 text-right font-black">{(item?.totalPrice || 0).toLocaleString('vi-VN')} đ</td>
                     </tr>
                   ))}
-                  <tr className="text-[1.35em]">
+                  <tr className="text-[1.5em]">
                     <td className="border-r-2 border-black p-1"></td>
-                    <td className="border-r-2 border-black p-1 text-right font-normal text-[0.85em] align-middle">Tổng</td>
+                    <td className="border-r-2 border-black p-1 text-right font-normal text-[0.8em] align-middle">Tổng</td>
                     <td className="p-1 text-right font-black text-[1.1em]">{(order.totalAmount || 0).toLocaleString('vi-VN')}</td>
                   </tr>
                 </tbody>
@@ -368,7 +368,7 @@ export const BillingPrintModal: React.FC<BillingPrintModalProps> = ({
               {/* Summary calculations */}
               {mode !== 'KITCHEN_TICKET' && (
                 <div className="text-right pt-1 font-extrabold text-sm border-t border-black mt-1">
-                  <span>Tong cong: {order.totalAmount.toLocaleString('vi-VN')} d</span>
+                  <span>Tổng cộng: {order.totalAmount.toLocaleString('vi-VN')} đ</span>
                 </div>
               )}
 
