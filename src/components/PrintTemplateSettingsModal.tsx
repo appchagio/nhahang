@@ -413,6 +413,30 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
               </div>
             </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-slate-600 font-semibold block">Tên Wifi quán:</label>
+                <input
+                  type="text"
+                  placeholder="khanh vi"
+                  value={form.wifiName || ''}
+                  onChange={(e) => handleFormChange('wifiName', e.target.value)}
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-bold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-slate-600 font-semibold block">Mật khẩu Wifi:</label>
+                <input
+                  type="text"
+                  placeholder="0914683351"
+                  value={form.wifiPassword || ''}
+                  onChange={(e) => handleFormChange('wifiPassword', e.target.value)}
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono"
+                />
+              </div>
+            </div>
+
             <div className="space-y-1">
               <label className="text-slate-600 font-semibold block">Địa chỉ trên hóa đơn:</label>
               <input
@@ -421,6 +445,28 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                 onChange={(e) => handleFormChange('address', e.target.value)}
                 className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800"
               />
+            </div>
+
+            <div className="p-3.5 bg-amber-50/80 border border-amber-200 rounded-2xl flex items-center justify-between mt-2">
+              <div className="space-y-0.5">
+                <span className="font-bold text-amber-900 text-xs flex items-center space-x-1.5">
+                  <Printer className="w-4 h-4 text-amber-600" />
+                  <span>Khung Bảng Mẫu In Ascii Grid (Chuẩn Máy In Giấy Nhiệt POS):</span>
+                </span>
+                <p className="text-[10px] text-amber-800 font-medium">
+                  Định dạng khung bảng ASCII (+-----+----+-----+) siêu ngắn gọn cắt lề ngắn nhất như ảnh thực tế.
+                </p>
+              </div>
+
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.useAsciiGridTable ?? true}
+                  onChange={(e) => handleFormChange('useAsciiGridTable', e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-600"></div>
+              </label>
             </div>
           </div>
 
