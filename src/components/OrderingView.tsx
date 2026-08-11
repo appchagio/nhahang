@@ -621,8 +621,8 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
               
               {/* Header */}
               <div className="text-center border-b border-dashed border-black pb-1 mb-1">
-                <h4 className="font-black text-[1.4em] uppercase tracking-tight">{printSettings?.restaurantName || 'CHA GIO BAP QUANG NGAI'}</h4>
-                <p className="text-[1.1em] font-bold text-black leading-tight">{printSettings?.address || '87, Hung Vuong, Phuong Ba Ria, TP HCM'}</p>
+                <h4 className="font-black text-[1.4em] uppercase tracking-tight">{printSettings?.restaurantName || 'CHẢ GIÒ BẮP QUẢNG NGÃI'}</h4>
+                <p className="text-[1.1em] font-bold text-black leading-tight">{printSettings?.address || '87, Hùng Vương, Phường Bà Rịa, TP. Hồ Chí Minh'}</p>
                 <p className="text-[1.1em] font-extrabold text-black leading-tight">SDT: {printSettings?.phone || '0972371722'}</p>
                 {printSettings?.wifiName && (
                   <p className="text-[1.1em] font-bold text-black leading-tight">Wifi: {printSettings.wifiName} - MK: {printSettings.wifiPassword || '0914683351'}</p>
@@ -631,34 +631,34 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
 
               {/* Title & Info */}
               <div className="text-center my-1">
-                <h3 className="font-black text-[1.4em] uppercase tracking-tight">HOA DON THANH TOAN</h3>
-                <p className="text-[1.2em] font-mono font-black text-black">Ma HD: {orderForPrinting.code || 'HD-NEW'}</p>
+                <h3 className="font-black text-[1.5em] uppercase tracking-tight">HÓA ĐƠN THANH TOÁN</h3>
+                <p className="text-[1.2em] font-mono font-black text-black">Mã HD: {orderForPrinting.code || 'HD-NEW'}</p>
                 <p className="text-[1.1em] font-mono font-bold text-black">
-                  Ngay: {new Date(orderForPrinting.createdAt || Date.now()).toLocaleTimeString('vi-VN')} {new Date(orderForPrinting.createdAt || Date.now()).toLocaleDateString('vi-VN')}
+                  Ngày: {new Date(orderForPrinting.createdAt || Date.now()).toLocaleTimeString('vi-VN')} {new Date(orderForPrinting.createdAt || Date.now()).toLocaleDateString('vi-VN')}
                 </p>
                 <p className="text-[1.2em] font-black uppercase text-black">(LIÊN {copyIdx + 1})</p>
               </div>
 
-              {/* HTML GRID TABLE MATCHING USER'S NEW EXCEL-LIKE GRID IMAGE 100% */}
+              {/* HTML GRID TABLE WITH FULL ACCENTS AND LARGE DISH NAMES & SL (1.5em font-black) */}
               <table className="w-full border-collapse border-2 border-black text-black font-sans my-2 select-none">
                 <thead>
-                  <tr className="border-b-2 border-black font-normal text-[1.0em]">
-                    <th className="border-r-2 border-black p-1 w-[45%] text-center font-normal">Ten mon</th>
+                  <tr className="border-b-2 border-black font-normal text-[1.1em]">
+                    <th className="border-r-2 border-black p-1 w-[45%] text-center font-normal">Tên món</th>
                     <th className="border-r-2 border-black p-1 w-[15%] text-center font-normal">SL</th>
-                    <th className="p-1 w-[40%] text-center font-normal">T.Tien</th>
+                    <th className="p-1 w-[40%] text-center font-normal">T.Tiền</th>
                   </tr>
                 </thead>
                 <tbody>
                   {(orderForPrinting.items || []).map((item, idx) => (
-                    <tr key={idx} className="border-b-2 border-black text-[1.35em] font-black">
+                    <tr key={idx} className="border-b-2 border-black text-[1.5em] font-black">
                       <td className="border-r-2 border-black p-1 text-left font-black leading-tight">{item?.name || 'Món'}</td>
                       <td className="border-r-2 border-black p-1 text-center font-black">{item?.quantity || 1}</td>
                       <td className="p-1 text-right font-black">{(item?.totalPrice || 0).toLocaleString('vi-VN')} đ</td>
                     </tr>
                   ))}
-                  <tr className="text-[1.35em]">
+                  <tr className="text-[1.5em]">
                     <td className="border-r-2 border-black p-1"></td>
-                    <td className="border-r-2 border-black p-1 text-right font-normal text-[0.85em] align-middle">Tổng</td>
+                    <td className="border-r-2 border-black p-1 text-right font-normal text-[0.8em] align-middle">Tổng</td>
                     <td className="p-1 text-right font-black text-[1.1em]">{(orderForPrinting.totalAmount || 0).toLocaleString('vi-VN')}</td>
                   </tr>
                 </tbody>
@@ -666,7 +666,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
 
               {/* Footer */}
               <div className="text-center mt-2 pt-1 border-t border-dashed border-black font-bold text-[1.1em] uppercase">
-                <p>{printSettings?.footerNote || 'CAM ON VA HEN GAP LAI QUY KHACH!'}</p>
+                <p>{printSettings?.footerNote || 'CẢM ƠN VÀ HẸN GẶP LẠI QUÝ KHÁCH!'}</p>
               </div>
 
             </div>
