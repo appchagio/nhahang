@@ -339,57 +339,30 @@ export const BillingPrintModal: React.FC<BillingPrintModalProps> = ({
                 </p>
               </div>
 
-              {/* Items List Table (Ascii Grid Table matching uploaded photo) */}
-              {printSettings.useAsciiGridTable ? (
-                <div className="my-1.5 font-mono text-[11px] leading-tight select-none">
-                  <div className="text-gray-400 text-[10px] truncate">+-----------------------+----+----------+</div>
-                  <div className="flex font-bold justify-between border-y border-gray-400 py-0.5 px-0.5">
-                    <span className="w-1/2 truncate">|Ten mon</span>
-                    <span className="w-1/6 text-center">| SL |</span>
-                    <span className="w-1/3 text-right">T.Tien |</span>
-                  </div>
-                  <div className="text-gray-400 text-[10px] truncate">+-----------------------+----+----------+</div>
-
-                  {order.items.map((item, idx) => (
-                    <div key={idx} className="flex justify-between items-center py-0.5 px-0.5 border-b border-dashed border-gray-300 font-bold">
-                      <span className="w-1/2 truncate">|{item.name}</span>
-                      <span className="w-1/6 text-center">| {item.quantity} |</span>
-                      <span className="w-1/3 text-right">{item.totalPrice.toLocaleString('vi-VN')} d |</span>
-                    </div>
+              {/* Items List Table (HTML Grid Table matching uploaded image 100%) */}
+              <table className="w-full border-collapse border-2 border-black text-black font-sans my-2 select-none text-[11px]">
+                <thead>
+                  <tr className="border-b-2 border-black font-extrabold">
+                    <th className="border-r-2 border-black p-1 w-[45%] text-center font-black">Ten mon</th>
+                    <th className="border-r-2 border-black p-1 w-[15%] text-center font-black">SL</th>
+                    <th className="p-1 w-[40%] text-center font-black">T.Tien</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(order.items || []).map((item, idx) => (
+                    <tr key={idx} className="border-b-2 border-black font-black">
+                      <td className="border-r-2 border-black p-1 text-left font-black">{item?.name || 'Món'}</td>
+                      <td className="border-r-2 border-black p-1 text-center font-black">{item?.quantity || 1}</td>
+                      <td className="p-1 text-right font-black">{(item?.totalPrice || 0).toLocaleString('vi-VN')} đ</td>
+                    </tr>
                   ))}
-                  <div className="text-gray-400 text-[10px] truncate">+-----------------------+----+----------+</div>
-                </div>
-              ) : (
-                <div className={`border-t border-b border-dashed border-gray-400 text-[11px] ${
-                  optimizeLength ? 'py-1 my-1 space-y-0.5' : 'py-2 my-2 space-y-1'
-                }`}>
-                  <div className="flex justify-between font-bold border-b border-gray-300 pb-0.5">
-                    <span>Món</span>
-                    <span>SL x Giá</span>
-                  </div>
-
-                  {order.items.map((item, idx) => (
-                    <div key={idx} className="space-y-0">
-                      <div className="flex justify-between font-bold">
-                        <span className="line-clamp-1">{item.name}</span>
-                        <span>{item.quantity} x {item.unitPrice.toLocaleString('vi-VN')}</span>
-                      </div>
-
-                      {item.selectedToppings && item.selectedToppings.length > 0 && (
-                        <div className="pl-2 text-[10px] text-gray-600">
-                          {item.selectedToppings.map((st, i) => (
-                            <p key={i}>+ {st.topping?.name || 'Topping'}</p>
-                          ))}
-                        </div>
-                      )}
-
-                      {item.note && (
-                        <p className="pl-2 text-[10px] text-gray-600 italic">Ghi chú: {item.note}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
+                  <tr className="font-black">
+                    <td className="border-r-2 border-black p-1"></td>
+                    <td className="border-r-2 border-black p-1 text-right font-black">Tổng</td>
+                    <td className="p-1 text-right font-black">{(order.totalAmount || 0).toLocaleString('vi-VN')}</td>
+                  </tr>
+                </tbody>
+              </table>
 
               {/* Summary calculations */}
               {mode !== 'KITCHEN_TICKET' && (
