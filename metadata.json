@@ -1,0 +1,6 @@
+{
+  "name": "Restaurant POS",
+  "description": "Hệ thống POS nhà hàng chuyên nghiệp với quy trình gọi món One-touch, tính toán real-time, quản lý thực đơn, in ấn bất đồng bộ K80/K57 và kiến trúc lưu trữ dữ liệu phân cấp.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
