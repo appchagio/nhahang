@@ -282,10 +282,6 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
           </div>
         )}
 
-        {/* Search & Category Filter */}
-        <div className="p-3 bg-white border-b border-slate-200 space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="relative flex-1">
         {/* PROMINENT HIGH-VISIBILITY CONNECT BUTTON FOR RONGTA RP355UL PRINTER */}
         <div className="p-3 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-2 shadow-inner">
           <div className="flex items-center space-x-2.5">
