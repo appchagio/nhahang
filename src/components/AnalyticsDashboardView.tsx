@@ -39,9 +39,36 @@ export const AnalyticsDashboardView: React.FC<AnalyticsDashboardViewProps> = ({
   const [recordsState, setRecordsState] = useState<PermanentRevenueAggregate[]>(revenueRecords);
   const [selectedMonth, setSelectedMonth] = useState<string>('2026-08');
   const [selectedYear, setSelectedYear] = useState<string>('2026');
+  const [customSelectedDate, setCustomSelectedDate] = useState<string>(() => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  });
   const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
 
   const activeRecords = recordsState;
+
+  // Custom Selected Date Stats
+  const customDateRecord = activeRecords.find((r) => r.date === customSelectedDate);
+  const customDateOrders = (orders || []).filter((o) => o.createdAt && o.createdAt.startsWith(customSelectedDate));
+
+  const customDateRevenue = customDateRecord ? customDateRecord.totalRevenue : customDateOrders.reduce((acc, o) => acc + (o.totalAmount || 0), 0);
+  const customDateTotalOrders = customDateRecord ? customDateRecord.totalOrders : customDateOrders.length;
+  const customDateCash = customDateRecord ? customDateRecord.cashRevenue : customDateOrders.filter(o => o.paymentMethod === 'CASH').reduce((acc, o) => acc + (o.totalAmount || 0), 0);
+  const customDateQr = customDateRecord ? customDateRecord.qrRevenue : customDateOrders.filter(o => o.paymentMethod === 'VIETQR').reduce((acc, o) => acc + (o.totalAmount || 0), 0);
+  const customDateCard = customDateRecord ? customDateRecord.cardRevenue : customDateOrders.filter(o => o.paymentMethod === 'CARD').reduce((acc, o) => acc + (o.totalAmount || 0), 0);
+
+  const handleDeleteCustomDateRevenue = () => {
+    const confirmed = window.confirm(
+      `⚠️ CẢNH BÁO NGUY HIỂM!\n\nBạn có chắc chắn muốn XÓA SẠCH dữ liệu doanh thu Ngày ${customSelectedDate}?\n\nHành động này không thể khôi phục!`
+    );
+    if (confirmed) {
+      const updated = POSStorageEngine.deleteRevenueByDate(customSelectedDate);
+      setRecordsState(updated);
+      if (onUpdateRevenueRecords) onUpdateRevenueRecords(updated);
+      setDeleteMessage(`Đã xóa sạch dữ liệu doanh thu Ngày ${customSelectedDate} thành công.`);
+      setTimeout(() => setDeleteMessage(null), 4000);
+    }
+  };
 
   const totalRevenue = activeRecords.reduce((acc, r) => acc + r.totalRevenue, 0);
   const totalOrders = activeRecords.reduce((acc, r) => acc + r.totalOrders, 0);
@@ -213,6 +240,50 @@ export const AnalyticsDashboardView: React.FC<AnalyticsDashboardViewProps> = ({
               </button>
             </div>
 
+          </div>
+
+          {/* Box 3: Xem Doanh Thu Theo Ngày Tùy Chọn (Matching User's Request) */}
+          <div className="bg-white border border-indigo-200 rounded-2xl p-4 shadow-sm space-y-3 mt-3">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-slate-100 pb-3">
+              <div className="flex items-center space-x-2 font-bold text-xs text-indigo-900">
+                <Calendar className="w-4 h-4 text-indigo-600 shrink-0" />
+                <span className="uppercase tracking-wide font-black">Xem Doanh Thu Ngày Tùy Chọn:</span>
+                <input
+                  type="date"
+                  value={customSelectedDate}
+                  onChange={(e) => setCustomSelectedDate(e.target.value)}
+                  className="bg-indigo-50 border border-indigo-300 font-mono font-bold text-indigo-900 text-xs rounded-lg px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
+                />
+              </div>
+
+              <button
+                onClick={handleDeleteCustomDateRevenue}
+                className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] rounded-lg shadow-sm transition flex items-center space-x-1 cursor-pointer shrink-0"
+              >
+                <Trash2 className="w-3.5 h-3.5 text-rose-200" />
+                <span>Xóa Doanh Thu Ngày {customSelectedDate}</span>
+              </button>
+            </div>
+
+            {/* Custom Date Summary Breakdown */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+              <div className="p-3 bg-indigo-50/70 border border-indigo-100 rounded-xl space-y-0.5">
+                <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider block">Tổng Doanh Thu</span>
+                <span className="text-base font-black text-indigo-950 font-mono block">{customDateRevenue.toLocaleString('vi-VN')} đ</span>
+              </div>
+              <div className="p-3 bg-emerald-50/70 border border-emerald-100 rounded-xl space-y-0.5">
+                <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider block">Tiền Mặt (Cash)</span>
+                <span className="text-base font-black text-emerald-950 font-mono block">{customDateCash.toLocaleString('vi-VN')} đ</span>
+              </div>
+              <div className="p-3 bg-blue-50/70 border border-blue-100 rounded-xl space-y-0.5">
+                <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider block">VietQR Chuyển Khoản</span>
+                <span className="text-base font-black text-blue-950 font-mono block">{customDateQr.toLocaleString('vi-VN')} đ</span>
+              </div>
+              <div className="p-3 bg-purple-50/70 border border-purple-100 rounded-xl space-y-0.5">
+                <span className="text-[10px] font-bold text-purple-600 uppercase tracking-wider block">Thẻ POS / Đơn Hàng</span>
+                <span className="text-base font-black text-purple-950 font-mono block">{customDateTotalOrders} đơn ({customDateCard.toLocaleString('vi-VN')}đ)</span>
+              </div>
+            </div>
           </div>
 
         </div>
