@@ -72,12 +72,7 @@ export function generateEscPosBuffer(order: Order, settings: PrintSettings): Uin
     addBytes([0x1b, 0x45, 0x00]); // Normal (No bold)
     addStr(`| ${qtyStr} |${paddedName}|${priceStr} |\n`);
     addBytes([0x1d, 0x21, 0x00]); // Reset font size
-    addStr('+----+-----------------------+----------+\n'); // Solid Cell Border Line for each dish!
   });
-
-  // Total Row spanning columns
-  addStr(`|        Tong                |${(`${(order.totalAmount || 0).toLocaleString('vi-VN')} d`).padStart(10, ' ')}|\n`);
-  addStr('+----+-----------------------+----------+\n');
 
   // Right Align for Total
   addBytes([0x1b, 0x61, 0x02]);
