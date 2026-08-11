@@ -296,6 +296,7 @@ export default function App() {
             orders={cachedOrders}
             menu={menu}
             printSettings={printSettings}
+            onUpdateRevenueRecords={(newRecords) => setRevenueRecords(newRecords)}
           />
         )}
 
