@@ -10,10 +10,6 @@ import {
   Minus,
   Plus,
   CheckCircle2,
-  Zap,
-  QrCode,
-  Building2,
-  Sparkles,
   Scissors,
   ScissorsLineDashed
 } from 'lucide-react';
@@ -60,15 +56,15 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
   };
 
   const handlePairUsb = () => {
-    setTestPrintMessage('Đã tự động kết nối & ghép nối thiết bị cổng USB Sunmi D2 / USB POS (a5c:5843)');
+    setTestPrintMessage('Đã ghép nối thành công thiết bị cổng USB Sunmi D2 / USB POS (a5c:5843)');
     setTimeout(() => setTestPrintMessage(null), 3000);
   };
 
   const handleTestPrint = () => {
-    setTestPrintMessage('Đang phát tín hiệu in thử nghiệm (Test Print) tới máy in POS...');
+    setTestPrintMessage('Đang phát lệnh in thử nghiệm tới máy in POS...');
     setTimeout(() => {
       window.print();
-      setTestPrintMessage('Đã hoàn tất in thử nghiệm!');
+      setTestPrintMessage('Hoàn tất in thử nghiệm!');
       setTimeout(() => setTestPrintMessage(null), 2500);
     }, 300);
   };
@@ -80,39 +76,39 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 select-none">
-      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl animate-in zoom-in-95 flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 select-none">
+      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl animate-in zoom-in-95 flex flex-col max-h-[92vh]">
         
-        {/* Header */}
-        <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+        {/* Modal Header */}
+        <div className="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
           <div className="flex items-center space-x-2.5">
             <Printer className="w-5 h-5 text-emerald-400" />
             <h3 className="font-extrabold text-base text-white">
-              Cấu Hình Máy In Hóa Đơn, Cắt Bill & Mẫu In Thermal POS
+              Cấu Hình Máy In Hóa Đơn - CHẢ GIÒ QUẢNG NGÃI
             </h3>
           </div>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white rounded-lg">
+          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white rounded-lg transition">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6 text-xs flex-1">
+        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6 text-xs flex-1 bg-white">
           
           {testPrintMessage && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 font-bold flex items-center space-x-2 animate-in fade-in">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 font-bold flex items-center space-x-2 animate-in fade-in">
+              <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600 shrink-0" />
               <span>{testPrintMessage}</span>
             </div>
           )}
 
           {/* SECTION 1: CHỌN LOẠI KẾT NỐI */}
           <div className="space-y-3">
-            <label className="font-extrabold text-slate-800 text-xs block">
+            <label className="font-extrabold text-slate-900 text-xs block">
               Chọn loại kết nối
             </label>
 
-            <div className="flex flex-wrap items-center gap-6">
-              <label className="flex items-center space-x-2 cursor-pointer font-bold text-slate-800">
+            <div className="flex flex-wrap items-center gap-8">
+              <label className="flex items-center space-x-2.5 cursor-pointer font-bold text-slate-900">
                 <input
                   type="radio"
                   name="connectionType"
@@ -123,7 +119,7 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                 <span>USB (Trực tiếp cổng USB - Không cần cài Driver trên máy POS Sunmi D2)</span>
               </label>
 
-              <label className="flex items-center space-x-2 cursor-pointer font-bold text-slate-800">
+              <label className="flex items-center space-x-2.5 cursor-pointer font-bold text-slate-900">
                 <input
                   type="radio"
                   name="connectionType"
@@ -135,11 +131,11 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
               </label>
             </div>
 
-            {/* CARD KẾT NỐI CỔNG USB / LAN */}
-            <div className="p-4 bg-amber-50/50 border border-amber-200/80 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-100/80 flex items-center justify-center shrink-0 border border-amber-200">
-                  <Cpu className="w-5 h-5 text-amber-800" />
+            {/* CARD KẾT NỐI CỔNG USB / LAN MATCHING THE IMAGE */}
+            <div className="p-4 bg-[#fbf9f4] border border-[#f0ebe0] rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+              <div className="flex items-center space-x-3.5">
+                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shrink-0 border border-amber-200/80 shadow-sm">
+                  <Cpu className="w-5 h-5 text-amber-700" />
                 </div>
                 <div>
                   <div className="font-extrabold text-slate-900 text-xs">
@@ -148,9 +144,9 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                       : 'Kết Nối Máy In Qua Mạng LAN (Địa chỉ IP):'}
                   </div>
                   {form.connectionType === 'USB' ? (
-                    <div className="text-emerald-700 font-bold text-[11px] mt-0.5 flex items-center space-x-1">
-                      <span className="text-purple-600">✔</span>
-                      <span>{form.usbDeviceName}</span>
+                    <div className="text-emerald-700 font-bold text-[11px] mt-0.5 flex items-center space-x-1.5">
+                      <span className="text-purple-600 font-black">✔</span>
+                      <span className="text-emerald-700 font-bold">{form.usbDeviceName}</span>
                     </div>
                   ) : (
                     <div className="mt-1 flex items-center space-x-2">
@@ -166,12 +162,12 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                 </div>
               </div>
 
-              {/* Action buttons on the right matching the design */}
+              {/* Action Buttons on the Right */}
               <div className="flex items-center space-x-2 shrink-0">
                 <button
                   type="button"
                   onClick={handlePairUsb}
-                  className="px-4 py-2.5 bg-[#4a4635] hover:bg-[#383528] text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center space-x-1.5"
+                  className="px-4 py-2.5 bg-[#4e4b3c] hover:bg-[#3d3a2e] text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center space-x-1.5"
                 >
                   <RefreshCw className="w-4 h-4 text-amber-200" />
                   <span>Ghép Nối USB</span>
@@ -180,7 +176,7 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                 <button
                   type="button"
                   onClick={handleTestPrint}
-                  className="px-4 py-2.5 bg-[#252a22] hover:bg-[#1a1e18] text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center space-x-1.5"
+                  className="px-4 py-2.5 bg-[#242823] hover:bg-[#181c17] text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center space-x-1.5"
                 >
                   <Radio className="w-4 h-4 text-emerald-400" />
                   <span>In Thử Nghiệm</span>
@@ -189,48 +185,48 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
             </div>
           </div>
 
-          {/* SECTION 2: 3-COLUMN PRINT TEMPLATES & PAPER SIZES */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          {/* SECTION 2: 3-COLUMN SIZES ROW 1 */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
             
-            {/* Column 1: Invoice Template */}
-            <div className="space-y-1.5">
-              <label className="font-extrabold text-slate-800 text-xs block">
+            {/* Column 1: Mẫu in hóa đơn */}
+            <div className="space-y-2">
+              <label className="font-bold text-slate-900 text-xs block">
                 Mẫu in hóa đơn - Khổ giấy in hóa đơn
               </label>
               <select
                 value={form.paperSize}
                 onChange={(e) => handleFormChange('paperSize', e.target.value as 'K80' | 'K57')}
-                className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-800 font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-800 font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition"
               >
                 <option value="K80">Mẫu in hóa đơn - Khổ K80 (80mm)</option>
                 <option value="K57">Mẫu in hóa đơn - Khổ K57 (57mm)</option>
               </select>
             </div>
 
-            {/* Column 2: Temp Invoice Template */}
-            <div className="space-y-1.5">
-              <label className="font-extrabold text-slate-800 text-xs block">
+            {/* Column 2: Mẫu in tạm tính */}
+            <div className="space-y-2">
+              <label className="font-bold text-slate-900 text-xs block">
                 Mẫu in tạm tính - Khổ giấy in tạm tính
               </label>
               <select
                 value={form.tempPaperSize || 'K80'}
                 onChange={(e) => handleFormChange('tempPaperSize', e.target.value as 'K80' | 'K57')}
-                className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-800 font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-800 font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition"
               >
                 <option value="K80">Mẫu in - Khổ K80 (80mm)</option>
                 <option value="K57">Mẫu in - Khổ K57 (57mm)</option>
               </select>
             </div>
 
-            {/* Column 3: Shift Template */}
-            <div className="space-y-1.5">
-              <label className="font-extrabold text-slate-800 text-xs block">
+            {/* Column 3: Mẫu in phiếu giao ca */}
+            <div className="space-y-2">
+              <label className="font-bold text-slate-900 text-xs block">
                 Mẫu in phiếu giao ca
               </label>
               <select
                 value={form.shiftPaperSize || 'K80'}
                 onChange={(e) => handleFormChange('shiftPaperSize', e.target.value as 'K80' | 'K57')}
-                className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-800 font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-800 font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition"
               >
                 <option value="K80">Mẫu in mặc định - Khổ K80</option>
                 <option value="K57">Mẫu in mặc định - Khổ K57</option>
@@ -239,18 +235,18 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
 
           </div>
 
-          {/* SECTION 3: FONT SIZE & COPIES COUNTERS (ROW LAYOUT MATCHING IMAGE) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end pt-2">
+          {/* SECTION 3: FONT SIZE & COUNTERS ROW 2 */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end pt-2">
             
             {/* Font size */}
-            <div className="space-y-1.5">
-              <label className="font-extrabold text-slate-800 text-xs block">
+            <div className="space-y-2">
+              <label className="font-bold text-slate-900 text-xs block">
                 Kích thước font chữ in hóa đơn
               </label>
               <select
                 value={form.fontSizePx}
                 onChange={(e) => handleFormChange('fontSizePx', Number(e.target.value))}
-                className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-slate-800 font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-800 font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition"
               >
                 <option value={10}>Size 10 (10px - Siêu Nhỏ - Tối Ưu Giấy)</option>
                 <option value={11}>Size 11 (11px - Gọn Gàng Tiết Kiệm)</option>
@@ -262,17 +258,17 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
             </div>
 
             {/* Temp Copies */}
-            <div className="space-y-1.5">
-              <label className="font-extrabold text-slate-800 text-xs block">
+            <div className="space-y-2">
+              <label className="font-bold text-slate-900 text-xs block">
                 Số bản in tạm tính (liên)
               </label>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-5 py-1">
                 <button
                   type="button"
                   onClick={() => handleCounterChange('tempInvoiceCopies', -1)}
-                  className="w-9 h-9 rounded-full border border-slate-300 bg-slate-50 hover:bg-slate-200 flex items-center justify-center font-bold text-slate-700 transition"
+                  className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center font-bold text-slate-700 transition shadow-sm"
                 >
-                  <Minus className="w-4 h-4" />
+                  <Minus className="w-4 h-4 text-slate-600" />
                 </button>
                 <span className="font-mono font-black text-slate-900 text-base min-w-[20px] text-center">
                   {form.tempInvoiceCopies}
@@ -280,25 +276,25 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                 <button
                   type="button"
                   onClick={() => handleCounterChange('tempInvoiceCopies', 1)}
-                  className="w-9 h-9 rounded-full border border-slate-300 bg-slate-50 hover:bg-slate-200 flex items-center justify-center font-bold text-slate-700 transition"
+                  className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center font-bold text-slate-700 transition shadow-sm"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-4 h-4 text-slate-600" />
                 </button>
               </div>
             </div>
 
             {/* Shift Copies */}
-            <div className="space-y-1.5">
-              <label className="font-extrabold text-slate-800 text-xs block">
+            <div className="space-y-2">
+              <label className="font-bold text-slate-900 text-xs block">
                 Số bản in (liên)
               </label>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-5 py-1">
                 <button
                   type="button"
                   onClick={() => handleCounterChange('shiftCopies', -1)}
-                  className="w-9 h-9 rounded-full border border-slate-300 bg-slate-50 hover:bg-slate-200 flex items-center justify-center font-bold text-slate-700 transition"
+                  className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center font-bold text-slate-700 transition shadow-sm"
                 >
-                  <Minus className="w-4 h-4" />
+                  <Minus className="w-4 h-4 text-slate-600" />
                 </button>
                 <span className="font-mono font-black text-slate-900 text-base min-w-[20px] text-center">
                   {form.shiftCopies}
@@ -306,28 +302,28 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                 <button
                   type="button"
                   onClick={() => handleCounterChange('shiftCopies', 1)}
-                  className="w-9 h-9 rounded-full border border-slate-300 bg-slate-50 hover:bg-slate-200 flex items-center justify-center font-bold text-slate-700 transition"
+                  className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center font-bold text-slate-700 transition shadow-sm"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-4 h-4 text-slate-600" />
                 </button>
               </div>
             </div>
 
           </div>
 
-          {/* SECTION 4: INVOICE COPIES, AUTO-CUT & LENGTH OPTIMIZATION */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center pt-2">
-            <div className="space-y-1.5">
-              <label className="font-extrabold text-slate-800 text-xs block">
-                Số bàn in hóa đơn (liên)
+          {/* SECTION 4: INVOICE COPIES ROW 3 */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-center pt-2">
+            <div className="space-y-2">
+              <label className="font-bold text-slate-900 text-xs block">
+                Số bản in hóa đơn (liên)
               </label>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-5 py-1">
                 <button
                   type="button"
                   onClick={() => handleCounterChange('invoiceCopies', -1)}
-                  className="w-9 h-9 rounded-full border border-slate-300 bg-slate-50 hover:bg-slate-200 flex items-center justify-center font-bold text-slate-700 transition"
+                  className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center font-bold text-slate-700 transition shadow-sm"
                 >
-                  <Minus className="w-4 h-4" />
+                  <Minus className="w-4 h-4 text-slate-600" />
                 </button>
                 <span className="font-mono font-black text-slate-900 text-base min-w-[20px] text-center">
                   {form.invoiceCopies}
@@ -335,15 +331,15 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                 <button
                   type="button"
                   onClick={() => handleCounterChange('invoiceCopies', 1)}
-                  className="w-9 h-9 rounded-full border border-slate-300 bg-slate-50 hover:bg-slate-200 flex items-center justify-center font-bold text-slate-700 transition"
+                  className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center font-bold text-slate-700 transition shadow-sm"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-4 h-4 text-slate-600" />
                 </button>
               </div>
             </div>
 
             {/* Auto-Cut Toggle */}
-            <div className="p-3 bg-blue-50/80 border border-blue-200 rounded-xl flex items-center justify-between">
+            <div className="p-3.5 bg-blue-50/80 border border-blue-200 rounded-2xl flex items-center justify-between">
               <div className="space-y-0.5">
                 <span className="font-bold text-blue-900 text-xs flex items-center space-x-1.5">
                   <Scissors className="w-4 h-4 text-blue-600" />
@@ -366,7 +362,7 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
             </div>
 
             {/* Optimize Receipt Length Toggle */}
-            <div className="p-3 bg-emerald-50/80 border border-emerald-200 rounded-xl flex items-center justify-between">
+            <div className="p-3.5 bg-emerald-50/80 border border-emerald-200 rounded-2xl flex items-center justify-between">
               <div className="space-y-0.5">
                 <span className="font-bold text-emerald-900 text-xs flex items-center space-x-1.5">
                   <ScissorsLineDashed className="w-4 h-4 text-emerald-600" />
@@ -386,6 +382,45 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                 />
                 <div className="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
               </label>
+            </div>
+          </div>
+
+          {/* SECTION 5: THÔNG TIN THƯƠNG HIỆU */}
+          <div className="pt-4 border-t border-slate-200 space-y-3">
+            <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[11px]">
+              Thông tin Thương Hiệu & VietQR
+            </h4>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-slate-600 font-semibold block">Tên Nhà Hàng / Quán:</label>
+                <input
+                  type="text"
+                  value={form.restaurantName}
+                  onChange={(e) => handleFormChange('restaurantName', e.target.value)}
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-bold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-slate-600 font-semibold block">Số điện thoại liên hệ:</label>
+                <input
+                  type="text"
+                  value={form.phone}
+                  onChange={(e) => handleFormChange('phone', e.target.value)}
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-slate-600 font-semibold block">Địa chỉ trên hóa đơn:</label>
+              <input
+                type="text"
+                value={form.address}
+                onChange={(e) => handleFormChange('address', e.target.value)}
+                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800"
+              />
             </div>
           </div>
 
