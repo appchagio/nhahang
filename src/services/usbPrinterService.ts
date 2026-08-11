@@ -33,11 +33,11 @@ export function generateEscPosBuffer(order: Order, settings: PrintSettings): Uin
 
   // Double Height & Width for Restaurant Name
   addBytes([0x1d, 0x21, 0x11]);
-  addStr(`${removeVietnameseAccents(settings.restaurantName || 'CHA GIO BAP QUANG NGAI')}\n`);
+  addStr(`${settings.restaurantName || 'CHẢ GIÒ BẮP QUẢNG NGÃI'}\n`);
 
   // Normal Font size
   addBytes([0x1d, 0x21, 0x00]);
-  addStr(`${removeVietnameseAccents(settings.address || '87, Hung Vuong, P. Ba Ria, TP HCM')}\n`);
+  addStr(`${settings.address || '87, Hùng Vương, Phường Bà Rịa, TP. Hồ Chí Minh'}\n`);
   addStr(`SDT: ${settings.phone || '0972371722'}\n`);
   if (settings.wifiName) {
     addStr(`Wifi: ${settings.wifiName} - MK: ${settings.wifiPassword || '0914683351'}\n`);
@@ -45,44 +45,45 @@ export function generateEscPosBuffer(order: Order, settings: PrintSettings): Uin
 
   addStr('------------------------------------------------\n');
 
-  // Title
-  addBytes([0x1d, 0x21, 0x01]); // Bold / Enlarge
-  addStr('HOA DON THANH TOAN\n');
+  // Title: HÓA ĐƠN THANH TOÁN
+  addBytes([0x1d, 0x21, 0x11]); // Double Height & Double Width for Title
+  addStr('HÓA ĐƠN THANH TOÁN\n');
   addBytes([0x1d, 0x21, 0x00]);
-  addStr(`Ma HD: ${order.code || 'HD-NEW'}\n`);
+  addStr(`Mã HD: ${order.code || 'HD-NEW'}\n`);
   const dateStr = order.createdAt ? new Date(order.createdAt).toLocaleString('vi-VN') : new Date().toLocaleString('vi-VN');
-  addStr(`Ngay: ${removeVietnameseAccents(dateStr)}\n`);
+  addStr(`Ngày: ${dateStr}\n`);
 
   addStr('================================================\n');
 
   // Left Align for Table
   addBytes([0x1b, 0x61, 0x00]);
-  addStr('Ten mon                    | SL |     T.Tien    \n');
+  addStr('Tên món                    | SL |     T.Tiền    \n');
   addStr('------------------------------------------------\n');
 
-  // Items List
+  // Items List - Dish names and SL LARGE (Double Height 0x1d 0x21 0x01) as requested by user
+  addBytes([0x1d, 0x21, 0x01]); // Double Height for dish names & quantities
   (order.items || []).forEach((item) => {
-    const rawName = removeVietnameseAccents(item.name || 'Mon');
-    // Truncate or pad name to 26 chars
+    const rawName = item.name || 'Món';
     const paddedName = rawName.length > 25 ? rawName.substring(0, 25) : rawName.padEnd(25, ' ');
     const qtyStr = String(item.quantity || 1).padStart(3, ' ');
-    const priceStr = `${(item.totalPrice || 0).toLocaleString('vi-VN')}d`.padStart(13, ' ');
+    const priceStr = `${(item.totalPrice || 0).toLocaleString('vi-VN')} đ`.padStart(13, ' ');
     addStr(`${paddedName}|${qtyStr} |${priceStr}\n`);
   });
 
+  addBytes([0x1d, 0x21, 0x00]);
   addStr('================================================\n');
 
   // Right Align for Total
   addBytes([0x1b, 0x61, 0x02]);
   addBytes([0x1d, 0x21, 0x11]); // Double size for Total
-  addStr(`TONG CONG: ${(order.totalAmount || 0).toLocaleString('vi-VN')} d\n`);
+  addStr(`TỔNG CỘNG: ${(order.totalAmount || 0).toLocaleString('vi-VN')} đ\n`);
   addBytes([0x1d, 0x21, 0x00]);
 
   addStr('------------------------------------------------\n');
 
   // Center Align Footer
   addBytes([0x1b, 0x61, 0x01]);
-  addStr(`${removeVietnameseAccents(settings.footerNote || 'CAM ON VA HEN GAP LAI QUY KHACH!')}\n\n\n\n`);
+  addStr(`${settings.footerNote || 'CẢM ƠN VÀ HẸN GẶP LẠI QUÝ KHÁCH!'}\n\n\n\n`);
 
   // Full Paper Cut Command (GS V 0)
   addBytes([0x1d, 0x56, 0x00]);
