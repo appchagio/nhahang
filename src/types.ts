@@ -101,6 +101,17 @@ export interface PrintSettings {
   address: string;
   phone: string;
   paperSize: 'K80' | 'K57';
+  tempPaperSize?: 'K80' | 'K57';
+  shiftPaperSize?: 'K80' | 'K57';
+  connectionType?: 'USB' | 'WIFI_LAN';
+  usbDeviceName?: string;
+  lanIpAddress?: string;
+  fontSizePx?: number; // 11, 12, 13, 14, 15
+  invoiceCopies?: number; // Default 2
+  tempInvoiceCopies?: number; // Default 1
+  shiftCopies?: number; // Default 1
+  optimizeReceiptLength?: boolean; // True to compress receipt margins & blank lines
+  enableAutoCut?: boolean; // Tự động cắt bill sau khi in
   headerNote: string;
   footerNote: string;
   showVat: boolean;
