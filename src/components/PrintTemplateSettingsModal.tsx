@@ -248,12 +248,12 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                 onChange={(e) => handleFormChange('fontSizePx', Number(e.target.value))}
                 className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-800 font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition"
               >
-                <option value={10}>Size 10 (10px - Siêu Nhỏ - Tối Ưu Giấy)</option>
-                <option value={11}>Size 11 (11px - Gọn Gàng Tiết Kiệm)</option>
-                <option value={12}>Size 12 (12px - Vừa Vặn Rõ Nét)</option>
-                <option value={13}>Size 13 (13px - Chuẩn Vừa Vặn - Mặc Định)</option>
-                <option value={14}>Size 14 (14px - Tối Ưu Tốc Độ In)</option>
-                <option value={15}>Size 15 (15px - Chữ To Dễ Đọc)</option>
+                <option value={14}>Size 14 (14px - Nhỏ Gọn)</option>
+                <option value={18}>Size 18 (18px - Vừa Vặn Rõ Nét)</option>
+                <option value={22}>Size 22 (22px - Chữ Nổi Bật - Gấp 2 Lần)</option>
+                <option value={26}>Size 26 (26px - Chữ To Rõ - Mặc Định)</option>
+                <option value={32}>Size 32 (32px - Chữ Siêu To - Gấp 3 Lần)</option>
+                <option value={38}>Size 38 (38px - Cực Đại Siêu Rõ - Gấp 4 Lần)</option>
               </select>
             </div>
 
