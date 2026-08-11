@@ -1,4 +1,3 @@
-// PrintTemplateSettingsModal Component
 import React, { useState } from 'react';
 import { PrintSettings, Order } from '../types';
 import { pairUsbPrinterDevice, printDirectUsbEscPos } from '../services/usbPrinterService';
