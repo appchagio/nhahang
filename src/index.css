@@ -43,6 +43,11 @@
     font-family: "Times New Roman", Times, Georgia, serif !important;
   }
 
+  /* Force Times New Roman on all printable elements */
+  #printable-receipt-wrapper *, .receipt-copy, .receipt-copy * {
+    font-family: "Times New Roman", Times, Georgia, serif !important;
+  }
+
   /* Force page break after each receipt copy to trigger hardware auto-cutter */
   .receipt-copy {
     page-break-inside: avoid !important;
