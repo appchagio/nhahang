@@ -310,7 +310,7 @@ export const BillingPrintModal: React.FC<BillingPrintModalProps> = ({
           <div className="my-3 flex-1 overflow-y-auto flex justify-center">
             <div
               id="printable-receipt"
-              className={`bg-white text-black font-mono shadow-xl rounded-sm transition-all border border-slate-200 ${
+              className={`bg-white text-black font-sans shadow-xl rounded-sm transition-all border border-slate-200 ${
                 paperFormat === 'K80' ? 'w-[320px]' : 'w-[240px]'
               } ${optimizeLength ? 'p-2.5 leading-tight space-y-1' : 'p-4 leading-relaxed space-y-2'}`}
               style={{
@@ -334,8 +334,8 @@ export const BillingPrintModal: React.FC<BillingPrintModalProps> = ({
                 <h3 className="font-black text-[1.5em] uppercase tracking-tight">
                   {mode === 'KITCHEN_TICKET' ? 'PHIẾU IN BẾP / BAR' : 'HÓA ĐƠN THANH TOÁN'}
                 </h3>
-                <p className="text-[11px] font-mono text-gray-800">Mã HD: {order.code}</p>
-                <p className="text-[10px] font-mono text-gray-600">
+                <p className="text-[11px] font-sans text-gray-800">Mã HD: {order.code}</p>
+                <p className="text-[10px] font-sans text-gray-600">
                   Ngày: {new Date(order.createdAt).toLocaleTimeString('vi-VN')} {new Date(order.createdAt).toLocaleDateString('vi-VN')}
                 </p>
               </div>
