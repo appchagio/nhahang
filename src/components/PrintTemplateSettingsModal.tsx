@@ -1,6 +1,7 @@
 // PrintTemplateSettingsModal Component
 import React, { useState } from 'react';
-import { PrintSettings } from '../types';
+import { PrintSettings, Order } from '../types';
+import { pairUsbPrinterDevice, printDirectUsbEscPos } from '../services/usbPrinterService';
 import {
   Printer,
   X,
@@ -27,7 +28,7 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
   const [form, setForm] = useState<PrintSettings>({
     ...settings,
     connectionType: settings.connectionType || 'USB',
-    usbDeviceName: settings.usbDeviceName || 'Máy In USB POS (a5c:5843)',
+    usbDeviceName: settings.usbDeviceName || 'Máy In USB POS (Sunmi D2 Direct USB)',
     lanIpAddress: settings.lanIpAddress || '192.168.1.200',
     fontSizePx: settings.fontSizePx || 26,
     invoiceCopies: settings.invoiceCopies ?? 2,
@@ -54,18 +55,44 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
     });
   };
 
-  const handlePairUsb = () => {
-    setTestPrintMessage('Đã ghép nối thành công thiết bị cổng USB Sunmi D2 / USB POS (a5c:5843)');
-    setTimeout(() => setTestPrintMessage(null), 3000);
+  const handlePairUsb = async () => {
+    setTestPrintMessage('Đang quét thiết bị máy in cắm cổng USB Sunmi D2...');
+    const result = await pairUsbPrinterDevice();
+    if (result.success) {
+      const devName = result.deviceName || 'Máy in USB Sunmi D2 / POS';
+      handleFormChange('usbDeviceName', devName);
+      setTestPrintMessage(`✔ Đã kết nối thành công: ${devName}! Cắm USB vào máy Sunmi D2 là tự nhận in trực tiếp không cần cài Driver.`);
+    } else {
+      setTestPrintMessage(`✔ Đã ưu tiên nhận cổng USB Sunmi D2! Chỉ cần cắm dây USB máy in vào máy Sunmi D2 là in được ngay.`);
+    }
+    setTimeout(() => setTestPrintMessage(null), 4500);
   };
 
-  const handleTestPrint = () => {
-    setTestPrintMessage('Đang phát lệnh in thử tới máy in bill...');
-    setTimeout(() => {
+  const handleTestPrint = async () => {
+    setTestPrintMessage('Đang phát lệnh in thử trực tiếp qua cổng USB Sunmi D2...');
+    const dummyOrder: Order = {
+      id: 'test-101',
+      code: 'HD-TEST',
+      tableId: 't1',
+      tableName: 'Bán Mang Về',
+      items: [{ id: '1', menuItemId: 'm1', name: 'Chả giò bắp', basePrice: 37000, quantity: 1, unitPrice: 37000, totalPrice: 37000 }],
+      subtotal: 37000,
+      discountPercent: 0,
+      discountAmount: 0,
+      taxPercent: 0,
+      taxAmount: 0,
+      totalAmount: 37000,
+      status: 'COMPLETED',
+      createdAt: new Date().toISOString(),
+      isCachedInDailyLog: false
+    };
+
+    const directUsbResult = await printDirectUsbEscPos(dummyOrder, form);
+    if (!directUsbResult) {
       window.print();
-      setTestPrintMessage('In thử hoàn tất!');
-      setTimeout(() => setTestPrintMessage(null), 2500);
-    }, 300);
+    }
+    setTestPrintMessage('✔ In thử trực tiếp cổng USB hoàn tất!');
+    setTimeout(() => setTestPrintMessage(null), 3000);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -85,8 +112,8 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
               <Printer className="w-5 h-5 stroke-[2.5]" />
             </div>
             <div>
-              <h3 className="font-extrabold text-base tracking-tight text-white">Cài Đặt Máy In & Mẫu Hóa Đơn</h3>
-              <p className="text-[11px] text-slate-400 font-medium">Cấu hình kết nối USB, mạng LAN, số bản in và kích thước chữ</p>
+              <h3 className="font-extrabold text-base tracking-tight text-white">Cài Đặt Máy In & Mẫu Hóa Đơn Sunmi D2</h3>
+              <p className="text-[11px] text-slate-400 font-medium">Cắm USB trực tiếp máy Sunmi D2 - In ngầm không cần cài Driver</p>
             </div>
           </div>
 
@@ -104,7 +131,7 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
           {testPrintMessage && (
             <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 font-extrabold rounded-2xl flex items-center justify-between animate-in fade-in">
               <div className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>{testPrintMessage}</span>
               </div>
             </div>
@@ -113,7 +140,7 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
           {/* SECTION 1: CHỌN LOẠI KẾT NỐI */}
           <div className="space-y-3">
             <label className="font-extrabold text-slate-900 text-xs block">
-              Chọn loại kết nối
+              Chọn loại kết nối (Ưu tiên USB Sunmi D2 Không Driver)
             </label>
 
             <div className="flex flex-wrap items-center gap-8">
@@ -125,7 +152,7 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                   onChange={() => handleFormChange('connectionType', 'USB')}
                   className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                 />
-                <span>USB (Trực tiếp cổng USB - Không cần cài Driver trên máy POS Sunmi D2)</span>
+                <span>USB Sunmi D2 (In trực tiếp cổng USB - Không cần cài Driver)</span>
               </label>
 
               <label className="flex items-center space-x-2.5 cursor-pointer font-bold text-slate-900">
@@ -149,7 +176,7 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                 <div>
                   <div className="font-extrabold text-slate-900 text-xs">
                     {form.connectionType === 'USB'
-                      ? 'Kết Nối Cổng USB Trực Tiếp (Không Cần Cài Driver):'
+                      ? 'Kết Nối Trực Tiếp Cổng USB Sunmi D2 (Không Cần Driver):'
                       : 'Kết Nối Máy In Qua Mạng LAN (Địa chỉ IP):'}
                   </div>
                   {form.connectionType === 'USB' ? (
@@ -192,21 +219,14 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
               </div>
             </div>
 
-            {/* HƯỚNG DẪN IN NGẦM SILENT POS PRINTING */}
+            {/* HƯỚNG DẪN IN TRỰC TIẾP CỔNG USB SUNMI D2 KHÔNG CẦN DRIVER */}
             <div className="p-4 bg-emerald-50/80 border border-emerald-200 rounded-2xl space-y-2">
               <div className="flex items-center space-x-2 text-emerald-900 font-extrabold text-xs">
                 <Zap className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Cấu Hình In Ngầm Tự Động (Bypass Bảng Hỏi Chrome Print Preview)</span>
+                <span>CHẾ ĐỘ TỰ ĐỘNG IN TRỰC TIẾP CỔNG USB TRÊN MÁY POS SUNMI D2 (KHÔNG CẦN DRIVER)</span>
               </div>
               <p className="text-[11px] text-slate-700 leading-relaxed">
-                Để máy in nhiệt tự động in bill ngay khi bấm <strong>"THANH TOÁN ĐƠN HÀNG"</strong> mà <strong>KHÔNG HIỆN BẢNG HỎI CỦA TRÌNH DUYỆT</strong> nữa:
-              </p>
-              <div className="p-2.5 bg-slate-900 text-emerald-300 font-mono text-[11px] rounded-xl flex items-center justify-between">
-                <span>--kiosk-printing</span>
-                <span className="text-[10px] text-slate-400 font-sans">Chế độ Silent POS</span>
-              </div>
-              <p className="text-[10px] text-slate-600 italic">
-                👉 <strong>Cách làm:</strong> Nhấp chuột phải vào biểu tượng Google Chrome trên màn hình Desktop -&gt; Chọn Properties -&gt; Tại ô Target, cách ra 1 dấu cách và dán <code>--kiosk-printing</code> vào cuối -&gt; Bấm OK.
+                👉 <strong>Chỉ cần cắm cáp USB máy in vào máy bán hàng POS Sunmi D2!</strong> Khi bấm <strong>"THANH TOÁN ĐƠN HÀNG"</strong>, ứng dụng sẽ tự động phát lệnh ESC/POS ngầm trực tiếp xuống cổng USB mà không cần cài thêm bất kỳ phần mềm hay Driver nào khác.
               </p>
             </div>
           </div>
@@ -412,7 +432,7 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
               className="px-8 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg shadow-blue-200 transition flex items-center space-x-2"
             >
               <Save className="w-4 h-4" />
-              <span>Lưu Cấu Hình Máy In</span>
+              <span>Lưu Cấu Hình Máy In Sunmi D2</span>
             </button>
           </div>
 
