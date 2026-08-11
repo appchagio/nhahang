@@ -211,7 +211,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
     }
   };
 
-  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT (EXACT PHOTO ASCII GRID)
+  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT (EXACT IMAGE GRID MATCH)
   const handleDirectCheckoutAndPrint = () => {
     if (!activeOrder || currentItems.length === 0) return;
 
@@ -234,7 +234,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
     saveCurrentOrderWithItems([]);
 
     // 4. Show Notification Toast
-    setSuccessToast(`✔ Thanh Toán Thành Công! Máy in đang in ${copies} bill theo chuẩn mẫu ảnh thực tế.`);
+    setSuccessToast(`✔ Thanh Toán Thành Công! Máy in đang in ${copies} bill theo chuẩn khung kẻ mới.`);
     setTimeout(() => {
       setSuccessToast(null);
     }, 3500);
@@ -293,7 +293,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
 
             <div className="hidden sm:flex items-center space-x-1.5 text-[11px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1.5 rounded-lg shrink-0 font-bold">
               <Zap className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Mẫu In Bill Chuẩn Khung Ảnh: {currentFontSize}px</span>
+              <span>Mẫu Khung Kẻ Mới: {currentFontSize}px</span>
             </div>
           </div>
 
@@ -585,7 +585,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
         </div>
       )}
 
-      {/* DIRECT THERMAL RECEIPT WRAPPER - EXACT PHYSICAL PHOTO ASCII GRID MATCH */}
+      {/* DIRECT THERMAL RECEIPT WRAPPER - EXACT 100% MATCH TO USER'S NEW GRID IMAGE */}
       {orderForPrinting && (
         <div id="printable-receipt-wrapper" className="hidden print:block">
           {Array.from({ length: printSettings?.invoiceCopies || 2 }).map((_, copyIdx) => (
@@ -615,32 +615,30 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
                 <p className="text-[1.2em] font-black uppercase text-black">(LIÊN {copyIdx + 1})</p>
               </div>
 
-              {/* Ascii Grid Table Matching Photo 100% */}
-              <div className="my-1 font-mono text-[1.2em] font-black leading-tight select-none">
-                <div className="text-black font-black truncate">+-----------------------+----+----------+</div>
-                <div className="flex font-black justify-between py-0.5">
-                  <span className="w-1/2 font-black">|Ten mon</span>
-                  <span className="w-1/6 text-center font-black">| SL |</span>
-                  <span className="w-1/3 text-right font-black">T.Tien |</span>
-                </div>
-                <div className="text-black font-black truncate">+-----------------------+----+----------+</div>
-
-                {(orderForPrinting.items || []).map((item, idx) => (
-                  <React.Fragment key={idx}>
-                    <div className="flex justify-between items-center py-0.5 font-black text-[1em]">
-                      <span className="w-1/2 truncate font-black">|{item?.name || 'Món'}</span>
-                      <span className="w-1/6 text-center font-black">| {item?.quantity || 1} |</span>
-                      <span className="w-1/3 text-right font-black">{(item?.totalPrice || 0).toLocaleString('vi-VN')} d |</span>
-                    </div>
-                    <div className="text-black font-black truncate">+-----------------------+----+----------+</div>
-                  </React.Fragment>
-                ))}
-              </div>
-
-              {/* Summary */}
-              <div className="text-right pt-1 font-black text-[1.4em]">
-                <span>Tong cong: {(orderForPrinting.totalAmount || 0).toLocaleString('vi-VN')} d</span>
-              </div>
+              {/* HTML GRID TABLE MATCHING USER'S NEW EXCEL-LIKE GRID IMAGE 100% */}
+              <table className="w-full border-collapse border-2 border-black text-black font-sans my-2 select-none">
+                <thead>
+                  <tr className="border-b-2 border-black text-[1.1em] font-extrabold">
+                    <th className="border-r-2 border-black p-1 w-[45%] text-center font-black">Ten mon</th>
+                    <th className="border-r-2 border-black p-1 w-[15%] text-center font-black">SL</th>
+                    <th className="p-1 w-[40%] text-center font-black">T.Tien</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(orderForPrinting.items || []).map((item, idx) => (
+                    <tr key={idx} className="border-b-2 border-black text-[1.2em] font-black">
+                      <td className="border-r-2 border-black p-1 text-left font-black">{item?.name || 'Món'}</td>
+                      <td className="border-r-2 border-black p-1 text-center font-black">{item?.quantity || 1}</td>
+                      <td className="p-1 text-right font-black">{(item?.totalPrice || 0).toLocaleString('vi-VN')} đ</td>
+                    </tr>
+                  ))}
+                  <tr className="text-[1.3em] font-black">
+                    <td className="border-r-2 border-black p-1"></td>
+                    <td className="border-r-2 border-black p-1 text-right font-black">Tổng</td>
+                    <td className="p-1 text-right font-black">{(orderForPrinting.totalAmount || 0).toLocaleString('vi-VN')}</td>
+                  </tr>
+                </tbody>
+              </table>
 
               {/* Footer */}
               <div className="text-center mt-2 pt-1 border-t border-dashed border-black font-bold text-[1.1em] uppercase">
