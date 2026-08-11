@@ -55,22 +55,24 @@ export function generateEscPosBuffer(order: Order, settings: PrintSettings): Uin
 
   addStr('------------------------------------------------\n');
 
-  // ASCII Table Grid matching uploaded photo 100%
+  // ASCII Table Grid matching uploaded photo 100% with solid cell borders for every dish item
   addBytes([0x1b, 0x61, 0x00]); // Left Align
   addStr('+-----------------------+----+----------+\n');
   addStr('|Ten mon                | SL |   T.Tien |\n');
   addStr('+-----------------------+----+----------+\n');
 
-  // Items List - Dish names and quantities
+  // Items List - Super Bold & Large Uppercase Dish Names with Solid Line Separator for Each Item
   (order.items || []).forEach((item) => {
-    const rawName = removeVietnameseAccents(item.name || 'Mon');
+    const rawName = removeVietnameseAccents(item.name || 'MON').toUpperCase();
     const paddedName = rawName.length > 23 ? rawName.substring(0, 23) : rawName.padEnd(23, ' ');
     const qtyStr = String(item.quantity || 1).padStart(2, ' ');
     const priceStr = `${(item.totalPrice || 0).toLocaleString('vi-VN')} d`.padStart(9, ' ');
-    addStr(`|${paddedName}| ${qtyStr} |${priceStr} |\n`);
-  });
 
-  addStr('+-----------------------+----+----------+\n');
+    addBytes([0x1d, 0x21, 0x01]); // Double Height & Bold for Super Large Text
+    addStr(`|${paddedName}| ${qtyStr} |${priceStr} |\n`);
+    addBytes([0x1d, 0x21, 0x00]); // Reset font
+    addStr('+-----------------------+----+----------+\n'); // Solid Cell Border Line for each dish!
+  });
 
   // Right Align for Total
   addBytes([0x1b, 0x61, 0x02]);
