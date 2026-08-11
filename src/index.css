@@ -11,21 +11,10 @@
     padding: 0 !important;
     height: auto !important;
     min-height: 0 !important;
-    max-height: 100% !important;
     background: #ffffff !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-  }
-
-  /* Force 1 page strictly, avoid page breaks */
-  *, *::before, *::after {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-    page-break-after: avoid !important;
-    break-after: avoid !important;
-    page-break-before: avoid !important;
-    break-before: avoid !important;
   }
 
   /* Hide regular UI elements during print */
@@ -54,8 +43,18 @@
     font-family: monospace, Courier, monospace !important;
   }
 
+  /* Force page break after each receipt copy to trigger hardware auto-cutter */
   .receipt-copy {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: always !important;
+    break-after: page !important;
     margin: 0 !important;
     padding: 0 0 2px 0 !important;
+  }
+
+  .receipt-copy:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
   }
 }
