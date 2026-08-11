@@ -195,6 +195,12 @@ export class POSStorageEngine {
     localStorage.setItem(STORAGE_KEYS.PERMANENT_REVENUE, JSON.stringify(records));
   }
 
+  // Clear all permanent revenue records (Reset total revenue to 0)
+  static clearAllPermanentRevenue(): PermanentRevenueAggregate[] {
+    this.savePermanentRevenue([]);
+    return [];
+  }
+
   // Delete permanent revenue by specific date (e.g. "2026-08-11")
   static deleteRevenueByDate(dateStr: string): PermanentRevenueAggregate[] {
     const records = this.getPermanentRevenue();
