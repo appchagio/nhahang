@@ -10,7 +10,7 @@ import { INITIAL_TABLES, INITIAL_MENU_ITEMS, INITIAL_PRINT_SETTINGS } from '../d
 
 const STORAGE_KEYS = {
   TABLES: 'pos_tables_v1',
-  MENU: 'pos_menu_v3',
+  MENU: 'pos_menu_v4',
   CACHED_ORDERS: 'pos_cached_orders_v1',
   PERMANENT_REVENUE: 'pos_permanent_revenue_v1',
   PRINT_SETTINGS: 'pos_print_settings_v1',
