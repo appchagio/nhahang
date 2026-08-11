@@ -11,6 +11,7 @@ import {
   PaymentMethod
 } from '../types';
 import { calculateOrderSummary, createOrderItem } from '../services/calcEngine';
+import { printDirectUsbEscPos } from '../services/usbPrinterService';
 import {
   Search,
   Plus,
@@ -212,8 +213,8 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
     }
   };
 
-  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT
-  const handleDirectCheckoutAndPrint = () => {
+  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT (SUNMI D2 DIRECT USB + BROWSER FALLBACK)
+  const handleDirectCheckoutAndPrint = async () => {
     if (!activeOrder || currentItems.length === 0) return;
 
     const copies = printSettings?.invoiceCopies || 2;
@@ -226,16 +227,21 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
       onConfirmPayment(orderSnapshot.id, 'CASH');
     }
 
-    // 2. Trigger Printer Immediately
-    setTimeout(() => {
-      window.print();
-    }, 100);
+    // 2. Try Direct USB ESC/POS Hardware Printing (Sunmi D2 Direct USB / WebUSB / WebSerial - No Driver Needed)
+    const printedDirectUsb = await printDirectUsbEscPos(orderSnapshot, printSettings || {});
 
-    // 3. Clear Cart & Reset for next sale
+    // 3. Fallback to Window Print if Direct USB output is not active
+    if (!printedDirectUsb) {
+      setTimeout(() => {
+        window.print();
+      }, 100);
+    }
+
+    // 4. Clear Cart & Reset for next sale
     saveCurrentOrderWithItems([]);
 
-    // 4. Show Notification Toast
-    setSuccessToast(`✔ Thanh Toán Thành Công! Máy in đang in ${copies} bill theo chuẩn khung kẻ mới.`);
+    // 5. Show Notification Toast
+    setSuccessToast(`✔ Thanh Toán Thành Công! Máy in USB Sunmi D2 đang tự động in ${copies} bill.`);
     setTimeout(() => {
       setSuccessToast(null);
     }, 3500);
@@ -269,7 +275,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
         {successToast && (
           <div className="p-3 bg-emerald-600 text-white font-extrabold text-xs flex items-center justify-between shadow-md animate-in slide-in-from-top duration-200">
             <div className="flex items-center space-x-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-200" />
+              <CheckCircle2 className="w-5 h-5 text-emerald-200 shrink-0" />
               <span>{successToast}</span>
             </div>
             <button onClick={() => setSuccessToast(null)} className="text-white hover:text-emerald-200 font-bold text-sm">
@@ -293,8 +299,8 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
             </div>
 
             <div className="hidden sm:flex items-center space-x-1.5 text-[11px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1.5 rounded-lg shrink-0 font-bold">
-              <Zap className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Đồng Bộ Hình Ảnh Thực Đơn ({menu.length} Món)</span>
+              <Zap className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span>Cắm USB Sunmi D2 In Trực Tiếp</span>
             </div>
           </div>
 
@@ -315,7 +321,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
           </div>
         </div>
 
-        {/* Menu Cards Grid - DISPLAY SYNCED IMAGE THUMBNAILS FOR ALL DISHES */}
+        {/* Menu Cards Grid */}
         <div className="flex-1 p-4 overflow-y-auto bg-[#F8FAFC]">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 xl:grid-cols-4 gap-3.5">
             {(filteredMenu || []).map((item) => (
@@ -324,7 +330,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
                 onClick={() => handleAddItemToCart(item)}
                 className="bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-emerald-500 hover:shadow-lg transition duration-150 cursor-pointer flex flex-col justify-between group active:scale-95 select-none"
               >
-                {/* DISH IMAGE THUMBNAIL SYNCED WITH MENU MANAGEMENT */}
+                {/* DISH IMAGE THUMBNAIL */}
                 <div className="relative w-full h-28 bg-slate-100 overflow-hidden shrink-0">
                   {item.imageUrl ? (
                     <img
@@ -604,7 +610,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
         </div>
       )}
 
-      {/* DIRECT THERMAL RECEIPT WRAPPER - EXACT 100% MATCH TO USER'S NEW GRID IMAGE */}
+      {/* DIRECT THERMAL RECEIPT WRAPPER */}
       {orderForPrinting && (
         <div id="printable-receipt-wrapper" className="hidden print:block">
           {Array.from({ length: printSettings?.invoiceCopies || 2 }).map((_, copyIdx) => (
