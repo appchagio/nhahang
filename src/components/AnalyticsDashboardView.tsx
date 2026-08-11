@@ -70,6 +70,26 @@ export const AnalyticsDashboardView: React.FC<AnalyticsDashboardViewProps> = ({
     }
   };
 
+  const handleClearAllRevenue = () => {
+    const confirmed = window.confirm(
+      `⚠️ CẢNH BÁO NGUY HIỂM TỐI CAO!\n\nBạn có chắc chắn muốn XÓA SẠCH TẤT CẢ DOANH THU TÍCH LŨY TỪ TRƯỚC ĐẾN NAY (Reset toàn bộ về 0đ)?\n\nHành động này sẽ xóa sạch dữ liệu doanh thu vĩnh viễn và KHÔNG THỂ KHÔI PHỤC!`
+    );
+
+    if (confirmed) {
+      const doubleCheck = window.confirm(
+        `⛔ XÁC NHẬN LẦN 2:\n\nXác nhận lần cuối: Xóa sạch toàn bộ tổng doanh thu hệ thống?`
+      );
+      if (doubleCheck) {
+        const updated = POSStorageEngine.clearAllPermanentRevenue();
+        setRecordsState(updated);
+        if (onUpdateRevenueRecords) onUpdateRevenueRecords(updated);
+
+        setDeleteMessage(`💥 Đã xóa sạch TẤT CẢ tổng doanh thu hệ thống thành công (Reset toàn bộ về 0đ)!`);
+        setTimeout(() => setDeleteMessage(null), 5000);
+      }
+    }
+  };
+
   const totalRevenue = activeRecords.reduce((acc, r) => acc + r.totalRevenue, 0);
   const totalOrders = activeRecords.reduce((acc, r) => acc + r.totalOrders, 0);
   const totalCash = activeRecords.reduce((acc, r) => acc + r.cashRevenue, 0);
@@ -237,6 +257,23 @@ export const AnalyticsDashboardView: React.FC<AnalyticsDashboardViewProps> = ({
               >
                 <Trash2 className="w-4 h-4 text-rose-200" />
                 <span>Xóa Doanh Thu Năm 2026</span>
+              </button>
+            </div>
+
+            {/* Box 3: Delete All Total Revenue (Matching User's Explicit Request) */}
+            <div className="bg-[#450a0a] border border-rose-900 rounded-2xl px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md col-span-1 md:col-span-2 mt-1">
+              <div className="flex items-center space-x-2 font-bold text-xs text-rose-200">
+                <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 animate-pulse" />
+                <span className="uppercase font-black tracking-wide text-rose-300">Xóa Tổng Doanh Thu:</span>
+                <span className="text-white font-medium">Reset sạch tất cả doanh thu tích lũy từ trước tới nay về 0đ</span>
+              </div>
+
+              <button
+                onClick={handleClearAllRevenue}
+                className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-700 hover:to-rose-800 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-red-950/40 transition flex items-center justify-center space-x-2 cursor-pointer active:scale-95 border border-rose-400/40 shrink-0"
+              >
+                <Trash2 className="w-4 h-4 text-white shrink-0" />
+                <span>XÓA SẠCH TẤT CẢ DOANH THU (RESET 0Đ)</span>
               </button>
             </div>
 
