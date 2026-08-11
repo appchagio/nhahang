@@ -68,7 +68,7 @@ export function generateEscPosBuffer(order: Order, settings: PrintSettings): Uin
     const qtyStr = String(item.quantity || 1).padStart(2, ' ');
     const priceStr = `${(item.totalPrice || 0).toLocaleString('vi-VN')} d`.padStart(9, ' ');
 
-    addBytes([0x1d, 0x21, 0x01]); // Double Height & Bold for Super Large Text
+    addBytes([0x1d, 0x21, 0x11]); // Double Height & Width (Identical to CHA GIO BAP QUANG NGAI font)
     addStr(`|${paddedName}| ${qtyStr} |${priceStr} |\n`);
     addBytes([0x1d, 0x21, 0x00]); // Reset font
     addStr('+-----------------------+----+----------+\n'); // Solid Cell Border Line for each dish!
