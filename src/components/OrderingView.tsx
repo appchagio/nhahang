@@ -211,7 +211,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
     }
   };
 
-  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT (DYNAMIC FONT SIZE SCALING)
+  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT (LARGE FONT COLUMNS)
   const handleDirectCheckoutAndPrint = () => {
     if (!activeOrder || currentItems.length === 0) return;
 
@@ -234,7 +234,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
     saveCurrentOrderWithItems([]);
 
     // 4. Show Notification Toast
-    setSuccessToast(`✔ Thanh Toán Thành Công! Máy in đang in ${copies} bill (Size chữ ${printSettings?.fontSizePx || 26}px).`);
+    setSuccessToast(`✔ Thanh Toán Thành Công! Máy in đang in ${copies} bill (Chữ to Siêu Rõ Nét).`);
     setTimeout(() => {
       setSuccessToast(null);
     }, 3500);
@@ -293,7 +293,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
 
             <div className="hidden sm:flex items-center space-x-1.5 text-[11px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1.5 rounded-lg shrink-0 font-bold">
               <Zap className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Cỡ Chữ Bill In: {currentFontSize}px</span>
+              <span>Chữ Món In Siêu To: {currentFontSize}px</span>
             </div>
           </div>
 
@@ -585,7 +585,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
         </div>
       )}
 
-      {/* DIRECT THERMAL RECEIPT WRAPPER - DYNAMIC FONT SIZE SCALING UP TO 4X (38PX) */}
+      {/* DIRECT THERMAL RECEIPT WRAPPER - EXTRA LARGE FONT FOR ITEM COLUMNS AND HEADERS */}
       {orderForPrinting && (
         <div id="printable-receipt-wrapper" className="hidden print:block">
           {Array.from({ length: printSettings?.invoiceCopies || 2 }).map((_, copyIdx) => (
@@ -597,51 +597,51 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
               
               {/* Header */}
               <div className="text-center border-b border-dashed border-black pb-1 mb-1">
-                <h4 className="font-black text-[1.25em] uppercase tracking-tight">{printSettings?.restaurantName || 'CHA GIO BAP QUANG NGAI'}</h4>
-                <p className="text-[0.85em] text-black leading-tight">{printSettings?.address || '87, Hung Vuong, Phuong Ba Ria, TP HCM'}</p>
-                <p className="text-[0.85em] font-bold text-black leading-tight">SDT: {printSettings?.phone || '0972371722'}</p>
+                <h4 className="font-black text-[1.4em] uppercase tracking-tight">{printSettings?.restaurantName || 'CHA GIO BAP QUANG NGAI'}</h4>
+                <p className="text-[1.1em] font-extrabold text-black leading-tight">{printSettings?.address || '87, Hung Vuong, Phuong Ba Ria, TP HCM'}</p>
+                <p className="text-[1.1em] font-black text-black leading-tight">SDT: {printSettings?.phone || '0972371722'}</p>
                 {printSettings?.wifiName && (
-                  <p className="text-[0.85em] text-black leading-tight">Wifi: {printSettings.wifiName} - MK: {printSettings.wifiPassword || '0914683351'}</p>
+                  <p className="text-[1.1em] font-extrabold text-black leading-tight">Wifi: {printSettings.wifiName} - MK: {printSettings.wifiPassword || '0914683351'}</p>
                 )}
               </div>
 
               {/* Title & Info */}
               <div className="text-center my-1">
-                <h3 className="font-black text-[1.15em] uppercase tracking-tight">HOA DON THANH TOAN</h3>
-                <p className="text-[1em] font-mono font-bold text-black">Ma HD: {orderForPrinting.code || 'HD-NEW'}</p>
-                <p className="text-[0.85em] font-mono text-black">
+                <h3 className="font-black text-[1.4em] uppercase tracking-tight">HOA DON THANH TOAN</h3>
+                <p className="text-[1.2em] font-mono font-black text-black">Ma HD: {orderForPrinting.code || 'HD-NEW'}</p>
+                <p className="text-[1.1em] font-mono font-extrabold text-black">
                   Ngay: {new Date(orderForPrinting.createdAt || Date.now()).toLocaleTimeString('vi-VN')} {new Date(orderForPrinting.createdAt || Date.now()).toLocaleDateString('vi-VN')}
                 </p>
-                <p className="text-[0.9em] font-extrabold uppercase text-black">(LIÊN {copyIdx + 1})</p>
+                <p className="text-[1.2em] font-black uppercase text-black">(LIÊN {copyIdx + 1})</p>
               </div>
 
-              {/* Ascii Grid Table matching exact photo */}
-              <div className="my-1 font-mono text-[1em] leading-tight select-none">
-                <div className="text-black text-[0.85em] truncate">+-----------------------+----+----------+</div>
-                <div className="flex font-extrabold justify-between border-y border-black py-0.5">
-                  <span className="w-1/2">|Ten mon</span>
-                  <span className="w-1/6 text-center">| SL |</span>
-                  <span className="w-1/3 text-right">T.Tien |</span>
+              {/* Ascii Grid Table with EXTRA LARGE FONT (LỚN NHƯ CHỮ CHA GIO BAP QUANG NGAI) */}
+              <div className="my-1 font-mono text-[1.4em] font-black leading-tight select-none">
+                <div className="text-black font-black truncate">+-----------------------+----+----------+</div>
+                <div className="flex font-black justify-between border-y-2 border-black py-1">
+                  <span className="w-1/2 font-black">|Ten mon</span>
+                  <span className="w-1/6 text-center font-black">| SL |</span>
+                  <span className="w-1/3 text-right font-black">T.Tien |</span>
                 </div>
-                <div className="text-black text-[0.85em] truncate">+-----------------------+----+----------+</div>
+                <div className="text-black font-black truncate">+-----------------------+----+----------+</div>
 
                 {(orderForPrinting.items || []).map((item, idx) => (
-                  <div key={idx} className="flex justify-between items-center py-0.5 font-bold">
-                    <span className="w-1/2 truncate">|{item?.name || 'Món'}</span>
-                    <span className="w-1/6 text-center">| {item?.quantity || 1} |</span>
-                    <span className="w-1/3 text-right">{(item?.totalPrice || 0).toLocaleString('vi-VN')} d |</span>
+                  <div key={idx} className="flex justify-between items-center py-1 font-black text-[1em]">
+                    <span className="w-1/2 truncate font-black">|{item?.name || 'Món'}</span>
+                    <span className="w-1/6 text-center font-black">| {item?.quantity || 1} |</span>
+                    <span className="w-1/3 text-right font-black">{(item?.totalPrice || 0).toLocaleString('vi-VN')} d |</span>
                   </div>
                 ))}
-                <div className="text-black text-[0.85em]">+-----------------------+----+----------+</div>
+                <div className="text-black font-black">+-----------------------+----+----------+</div>
               </div>
 
-              {/* Summary */}
-              <div className="text-right pt-1 font-black text-[1.1em] border-t border-black">
+              {/* Summary - Extra Large & Ultra Bold */}
+              <div className="text-right pt-1 font-black text-[1.5em] border-t-2 border-black">
                 <span>Tong cong: {(orderForPrinting.totalAmount || 0).toLocaleString('vi-VN')} d</span>
               </div>
 
               {/* Footer */}
-              <div className="text-center mt-2 pt-1 border-t border-dashed border-black font-bold text-[0.85em] uppercase">
+              <div className="text-center mt-2 pt-1 border-t border-dashed border-black font-extrabold text-[1.1em] uppercase">
                 <p>{printSettings?.footerNote || 'CAM ON VA HEN GAP LAI QUY KHACH!'}</p>
               </div>
 
