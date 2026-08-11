@@ -1,3 +1,4 @@
+// AnalyticsDashboardView Component
 import React, { useState } from 'react';
 import { PermanentRevenueAggregate, Order, MenuItem, PrintSettings } from '../types';
 import { DocxExportService } from '../services/docxExportService';
