@@ -10,47 +10,50 @@ import {
   PaymentMethod
 } from '../types';
 import { calculateOrderSummary, createOrderItem } from '../services/calcEngine';
-import { POSLoyaltyEngine } from '../services/loyaltyEngine';
 import {
   Search,
   Plus,
   Minus,
   Trash2,
-  Printer,
   CreditCard,
   Utensils,
-  ChevronRight,
   Flame,
   CheckCircle2,
   X,
   Zap,
-  Tag,
   MessageSquare,
-  Users,
-  Award,
-  Phone,
-  Gift,
   ShoppingBag
 } from 'lucide-react';
 
 interface OrderingViewProps {
-  tables: Table[];
-  menu: MenuItem[];
-  activeTableId: string;
-  onSelectTable: (tableId: string) => void;
-  activeOrder: Order | null;
-  printSettings: PrintSettings;
-  onUpdateOrder: (order: Order) => void;
-  onConfirmPayment: (orderId: string, method: PaymentMethod) => void;
+  tables?: Table[];
+  menu?: MenuItem[];
+  activeTableId?: string;
+  onSelectTable?: (tableId: string) => void;
+  activeOrder?: Order | null;
+  printSettings?: PrintSettings;
+  onUpdateOrder?: (order: Order) => void;
+  onConfirmPayment?: (orderId: string, method: PaymentMethod) => void;
 }
 
 export const OrderingView: React.FC<OrderingViewProps> = ({
-  tables,
-  menu,
-  activeTableId,
+  tables = [],
+  menu = [],
+  activeTableId = 't1',
   onSelectTable,
-  activeOrder,
-  printSettings,
+  activeOrder = null,
+  printSettings = {
+    restaurantName: 'CHA GIO BAP QUANG NGAI',
+    address: '87, Hung Vuong, Phuong Ba Ria, TP HCM',
+    phone: '0972371722',
+    paperSize: 'K80',
+    headerNote: 'Chào mừng quý khách!',
+    footerNote: 'CAM ON VA HEN GAP LAI QUY KHACH!',
+    showVat: false,
+    showQrCode: false,
+    invoiceCopies: 2,
+    bankAccount: { bankName: 'MBBANK', accountNo: '0972371722', accountName: 'CHA GIO BAP QUANG NGAI' }
+  },
   onUpdateOrder,
   onConfirmPayment,
 }) => {
@@ -58,7 +61,6 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [discountPercent, setDiscountPercent] = useState<number>(0);
   const [taxPercent, setTaxPercent] = useState<number>(0);
-  const [customerPhoneInput, setCustomerPhoneInput] = useState<string>('');
   const [successToast, setSuccessToast] = useState<string | null>(null);
   const [lastPaidOrderForPrint, setLastPaidOrderForPrint] = useState<Order | null>(null);
 
@@ -69,34 +71,42 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
 
   // Active table
   const currentTable = useMemo(() => {
-    return tables.find((t) => t.id === activeTableId) || tables[0];
+    const list = tables || [];
+    return list.find((t) => t.id === activeTableId) || list[0] || { id: 't1', name: 'Bán Mang Về' };
   }, [tables, activeTableId]);
 
   // Current items in current order
-  const currentItems = activeOrder?.items || [];
+  const currentItems = useMemo(() => {
+    return activeOrder?.items || [];
+  }, [activeOrder]);
+
   const calcSummary = useMemo(() => {
     return calculateOrderSummary(currentItems, taxPercent, discountPercent);
   }, [currentItems, taxPercent, discountPercent]);
 
   // Categories list
   const categories = useMemo(() => {
-    const set = new Set(menu.map((m) => m.category));
+    const rawMenu = menu || [];
+    const set = new Set(rawMenu.map((m) => m?.category).filter(Boolean));
     return ['Tất cả', ...Array.from(set)];
   }, [menu]);
 
   // Filtered menu
   const filteredMenu = useMemo(() => {
-    return menu.filter((item) => {
+    const rawMenu = menu || [];
+    return rawMenu.filter((item) => {
+      if (!item) return false;
       const matchCat = selectedCategory === 'Tất cả' || item.category === selectedCategory;
       const matchSearch =
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.code.toLowerCase().includes(searchQuery.toLowerCase());
+        (item.name || '').toLowerCase().includes((searchQuery || '').toLowerCase()) ||
+        (item.code || '').toLowerCase().includes((searchQuery || '').toLowerCase());
       return matchCat && matchSearch && item.isAvailable;
     });
   }, [menu, selectedCategory, searchQuery]);
 
   // Handle One-touch add item to order
   const handleAddItemToCart = (item: MenuItem) => {
+    if (!item) return;
     if (item.options && item.options.length > 0) {
       setToppingItem(item);
       setSelectedToppings([]);
@@ -127,15 +137,21 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
     
     const existingIndex = updatedItems.findIndex(
       (i) =>
+        i &&
         i.menuItemId === newItem.menuItemId &&
-        JSON.stringify(i.selectedToppings) === JSON.stringify(newItem.selectedToppings) &&
-        i.note === newItem.note
+        JSON.stringify(i.selectedToppings || []) === JSON.stringify(newItem.selectedToppings || []) &&
+        (i.note || '') === (newItem.note || '')
     );
 
     if (existingIndex >= 0) {
-      updatedItems[existingIndex].quantity += 1;
-      updatedItems[existingIndex].totalPrice =
-        updatedItems[existingIndex].unitPrice * updatedItems[existingIndex].quantity;
+      const existing = updatedItems[existingIndex];
+      const newQty = (existing.quantity || 1) + 1;
+      const unitPrice = existing.unitPrice || newItem.unitPrice || 0;
+      updatedItems[existingIndex] = {
+        ...existing,
+        quantity: newQty,
+        totalPrice: unitPrice * newQty,
+      };
     } else {
       updatedItems.push(newItem);
     }
@@ -146,13 +162,15 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
   const handleQuantityChange = (itemId: string, delta: number) => {
     let updatedItems = currentItems
       .map((item) => {
+        if (!item) return null;
         if (item.id === itemId) {
-          const newQty = item.quantity + delta;
+          const newQty = (item.quantity || 1) + delta;
           if (newQty <= 0) return null;
+          const unitPrice = item.unitPrice || 0;
           return {
             ...item,
             quantity: newQty,
-            totalPrice: item.unitPrice * newQty,
+            totalPrice: unitPrice * newQty,
           };
         }
         return item;
@@ -163,43 +181,48 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
   };
 
   const handleRemoveItem = (itemId: string) => {
-    const updatedItems = currentItems.filter((i) => i.id !== itemId);
+    const updatedItems = currentItems.filter((i) => i && i.id !== itemId);
     saveCurrentOrderWithItems(updatedItems);
   };
 
   const saveCurrentOrderWithItems = (items: OrderItem[]) => {
-    const summary = calculateOrderSummary(items, taxPercent, discountPercent);
+    const safeItems = (items || []).filter(Boolean);
+    const summary = calculateOrderSummary(safeItems, taxPercent, discountPercent);
     const updatedOrder: Order = {
       id: activeOrder?.id || `ord-${Date.now()}`,
       code: activeOrder?.code || `HD-${Math.floor(1000 + Math.random() * 9000)}`,
-      tableId: activeTableId,
+      tableId: activeTableId || 't1',
       tableName: currentTable?.name || 'Bán Mang Về',
-      items,
-      subtotal: summary.subtotal,
-      discountPercent,
-      discountAmount: summary.discountAmount,
-      taxPercent,
-      taxAmount: summary.taxAmount,
-      totalAmount: summary.totalAmount,
+      items: safeItems,
+      subtotal: summary.subtotal || 0,
+      discountPercent: discountPercent || 0,
+      discountAmount: summary.discountAmount || 0,
+      taxPercent: taxPercent || 0,
+      taxAmount: summary.taxAmount || 0,
+      totalAmount: summary.totalAmount || 0,
       status: activeOrder?.status || 'PREPARING',
       createdAt: activeOrder?.createdAt || new Date().toISOString(),
       isCachedInDailyLog: true,
     };
 
-    onUpdateOrder(updatedOrder);
+    if (onUpdateOrder) {
+      onUpdateOrder(updatedOrder);
+    }
   };
 
-  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT (LIỀN KỀ NHAU, KHÔNG TRẮNG)
+  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT (SAFE FROM UNDEFINED MAP)
   const handleDirectCheckoutAndPrint = () => {
     if (!activeOrder || currentItems.length === 0) return;
 
-    const copies = printSettings.invoiceCopies || 2;
-    // Snapshot current order before clearing
+    const copies = printSettings?.invoiceCopies || 2;
+    // Snapshot current order safely
     const orderSnapshot: Order = JSON.parse(JSON.stringify(activeOrder));
     setLastPaidOrderForPrint(orderSnapshot);
 
     // 1. Confirm Payment Immediately
-    onConfirmPayment(orderSnapshot.id, 'CASH');
+    if (onConfirmPayment) {
+      onConfirmPayment(orderSnapshot.id, 'CASH');
+    }
 
     // 2. Trigger Printer Immediately
     setTimeout(() => {
@@ -217,13 +240,14 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
   };
 
   const toggleToppingSelection = (optionTitle: string, topping: ToppingOption) => {
+    if (!topping) return;
     const exists = selectedToppings.some(
-      (t) => t.optionTitle === optionTitle && t.topping.id === topping.id
+      (t) => t.optionTitle === optionTitle && t.topping?.id === topping.id
     );
 
     if (exists) {
       setSelectedToppings((prev) =>
-        prev.filter((t) => !(t.optionTitle === optionTitle && t.topping.id === topping.id))
+        prev.filter((t) => !(t.optionTitle === optionTitle && t.topping?.id === topping.id))
       );
     } else {
       setSelectedToppings((prev) => [...prev, { optionTitle, topping }]);
@@ -267,12 +291,12 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
 
             <div className="hidden sm:flex items-center space-x-1.5 text-[11px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1.5 rounded-lg shrink-0">
               <Zap className="w-3.5 h-3.5 text-emerald-600" />
-              <span>In Liền Kề: {printSettings.invoiceCopies || 2} Bill</span>
+              <span>In Liền Kề: {printSettings?.invoiceCopies || 2} Bill</span>
             </div>
           </div>
 
           <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none">
-            {categories.map((cat) => (
+            {(categories || []).map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
@@ -291,7 +315,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
         {/* Menu Cards Grid */}
         <div className="flex-1 p-4 overflow-y-auto bg-[#F8FAFC]">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 xl:grid-cols-4 gap-3.5">
-            {filteredMenu.map((item) => (
+            {(filteredMenu || []).map((item) => (
               <div
                 key={item.id}
                 onClick={() => handleAddItemToCart(item)}
@@ -317,7 +341,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
 
                 <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
                   <span className="font-mono text-sm font-black text-emerald-600">
-                    {item.price.toLocaleString('vi-VN')} đ
+                    {(item.price || 0).toLocaleString('vi-VN')} đ
                   </span>
                   <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center transition">
                     <Plus className="w-4 h-4" />
@@ -327,7 +351,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
             ))}
           </div>
 
-          {filteredMenu.length === 0 && (
+          {(filteredMenu || []).length === 0 && (
             <div className="h-64 flex flex-col items-center justify-center text-slate-400 text-xs">
               <Utensils className="w-10 h-10 mb-2 text-slate-300" />
               <p className="font-medium">Không tìm thấy món ăn phù hợp</p>
@@ -357,14 +381,14 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
           <div className="text-right">
             <span className="text-xs text-slate-500 block">Số lượng món</span>
             <span className="font-mono text-sm font-bold text-emerald-600">
-              {currentItems.reduce((acc, i) => acc + i.quantity, 0)} món
+              {(currentItems || []).reduce((acc, i) => acc + (i?.quantity || 0), 0)} món
             </span>
           </div>
         </div>
 
         {/* Cart Items List */}
         <div className="flex-1 p-3 overflow-y-auto space-y-2.5">
-          {currentItems.map((item) => (
+          {(currentItems || []).map((item) => (
             <div
               key={item.id}
               className="p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition flex flex-col justify-between"
@@ -375,7 +399,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
                   
                   {item.selectedToppings && item.selectedToppings.length > 0 && (
                     <div className="mt-1 space-y-0.5">
-                      {item.selectedToppings.map((st, idx) => (
+                      {(item.selectedToppings || []).map((st, idx) => (
                         <p key={idx} className="text-[11px] text-blue-600/90 flex items-center space-x-1">
                           <span className="w-1 h-1 rounded-full bg-blue-600 inline-block" />
                           <span>{st.topping?.name || 'Topping'} (+{(st.topping?.price || 0).toLocaleString('vi-VN')}đ)</span>
@@ -392,12 +416,12 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
                   )}
 
                   <p className="text-xs font-mono text-slate-500 mt-1">
-                    {item.unitPrice.toLocaleString('vi-VN')} đ
+                    {(item.unitPrice || 0).toLocaleString('vi-VN')} đ
                   </p>
                 </div>
 
                 <span className="font-mono text-sm font-bold text-slate-900">
-                  {item.totalPrice.toLocaleString('vi-VN')} đ
+                  {(item.totalPrice || 0).toLocaleString('vi-VN')} đ
                 </span>
               </div>
 
@@ -431,7 +455,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
             </div>
           ))}
 
-          {currentItems.length === 0 && (
+          {(currentItems || []).length === 0 && (
             <div className="h-full flex flex-col items-center justify-center text-center p-6 text-slate-400">
               <Utensils className="w-12 h-12 mb-3 text-slate-300" />
               <p className="text-sm font-medium text-slate-600">Đơn mang về đang trống</p>
@@ -448,13 +472,13 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
           <div className="space-y-1.5 text-xs text-slate-600">
             <div className="flex justify-between">
               <span>Tạm tính:</span>
-              <span className="font-mono text-slate-800 font-bold">{calcSummary.subtotal.toLocaleString('vi-VN')} đ</span>
+              <span className="font-mono text-slate-800 font-bold">{(calcSummary?.subtotal || 0).toLocaleString('vi-VN')} đ</span>
             </div>
 
             <div className="flex justify-between text-base font-bold text-slate-900 pt-2 border-t border-slate-200">
               <span className="text-emerald-700 font-extrabold">TỔNG CỘNG:</span>
               <span className="font-mono text-emerald-600 text-xl font-black">
-                {calcSummary.totalAmount.toLocaleString('vi-VN')} đ
+                {(calcSummary?.totalAmount || 0).toLocaleString('vi-VN')} đ
               </span>
             </div>
           </div>
@@ -462,12 +486,12 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
           {/* ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT BUTTON */}
           <div className="pt-2">
             <button
-              disabled={currentItems.length === 0}
+              disabled={(currentItems || []).length === 0}
               onClick={handleDirectCheckoutAndPrint}
               className="w-full py-4 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white font-black text-sm uppercase tracking-wider flex items-center justify-center space-x-2 shadow-lg shadow-emerald-200 transition transform active:scale-95 cursor-pointer"
             >
               <CreditCard className="w-5 h-5 stroke-[2.5]" />
-              <span>THANH TOÁN ĐƠN HÀNG (IN {printSettings.invoiceCopies || 2} BILL)</span>
+              <span>THANH TOÁN ĐƠN HÀNG (IN {printSettings?.invoiceCopies || 2} BILL)</span>
             </button>
           </div>
 
@@ -484,7 +508,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
               <div>
                 <h3 className="font-bold text-base text-slate-800">{toppingItem.name}</h3>
                 <p className="text-xs font-mono text-emerald-600 font-bold mt-0.5">
-                  Giá gốc: {toppingItem.price.toLocaleString('vi-VN')} đ
+                  Giá gốc: {(toppingItem.price || 0).toLocaleString('vi-VN')} đ
                 </p>
               </div>
               <button
@@ -496,16 +520,16 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
             </div>
 
             <div className="p-4 space-y-4 max-h-[60vh] overflow-y-auto">
-              {toppingItem.options?.map((group, gIdx) => (
+              {(toppingItem.options || []).map((group, gIdx) => (
                 <div key={gIdx} className="space-y-2">
                   <h5 className="text-xs font-bold uppercase text-slate-500 tracking-wider">
                     {group.title}
                   </h5>
 
                   <div className="grid grid-cols-1 gap-2">
-                    {group.items.map((tp) => {
+                    {(group.items || []).map((tp) => {
                       const isSelected = selectedToppings.some(
-                        (t) => t.optionTitle === group.title && t.topping.id === tp.id
+                        (t) => t.optionTitle === group.title && t.topping?.id === tp.id
                       );
                       return (
                         <div
@@ -519,7 +543,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
                         >
                           <span className="text-xs">{tp.name}</span>
                           <span className="font-mono text-xs text-slate-500">
-                            +{tp.price.toLocaleString('vi-VN')}đ
+                            +{(tp.price || 0).toLocaleString('vi-VN')}đ
                           </span>
                         </div>
                       );
@@ -559,18 +583,18 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
         </div>
       )}
 
-      {/* DIRECT THERMAL RECEIPT WRAPPER - PRINTS 2 COPIES BACK-TO-BACK (LIỀN KỀ NHAU, 0 KHẢO TRẮNG) */}
+      {/* DIRECT THERMAL RECEIPT WRAPPER - PRINTS 2 COPIES BACK-TO-BACK (SAFE ARRAY MAP GUARANTEED) */}
       {orderForPrinting && (
         <div id="printable-receipt-wrapper" className="hidden print:block">
-          {Array.from({ length: printSettings.invoiceCopies || 2 }).map((_, copyIdx) => (
+          {Array.from({ length: printSettings?.invoiceCopies || 2 }).map((_, copyIdx) => (
             <div key={copyIdx} className="receipt-copy text-black bg-white font-mono p-1 leading-tight text-xs space-y-1">
               
               {/* Header */}
               <div className="text-center space-y-0.5 border-b border-dashed border-black pb-1">
-                <h4 className="font-extrabold text-sm uppercase tracking-wider">{printSettings.restaurantName || 'CHA GIO BAP QUANG NGAI'}</h4>
-                <p className="text-[10px] text-black">{printSettings.address || '87, Hung Vuong, Phuong Ba Ria, TP HCM'}</p>
-                <p className="text-[10px] font-bold text-black">SDT: {printSettings.phone || '0972371722'}</p>
-                {printSettings.wifiName && (
+                <h4 className="font-extrabold text-sm uppercase tracking-wider">{printSettings?.restaurantName || 'CHA GIO BAP QUANG NGAI'}</h4>
+                <p className="text-[10px] text-black">{printSettings?.address || '87, Hung Vuong, Phuong Ba Ria, TP HCM'}</p>
+                <p className="text-[10px] font-bold text-black">SDT: {printSettings?.phone || '0972371722'}</p>
+                {printSettings?.wifiName && (
                   <p className="text-[10px] text-black font-medium">Wifi: {printSettings.wifiName} - MK: {printSettings.wifiPassword || '0914683351'}</p>
                 )}
               </div>
@@ -578,9 +602,9 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
               {/* Title & Info */}
               <div className="text-center my-1 space-y-0.5">
                 <h3 className="font-extrabold text-sm uppercase tracking-tight">HOA DON THANH TOAN</h3>
-                <p className="text-[11px] font-mono font-bold text-black">Ma HD: {orderForPrinting.code}</p>
+                <p className="text-[11px] font-mono font-bold text-black">Ma HD: {orderForPrinting.code || 'HD-NEW'}</p>
                 <p className="text-[10px] font-mono text-black">
-                  Ngay: {new Date(orderForPrinting.createdAt).toLocaleTimeString('vi-VN')} {new Date(orderForPrinting.createdAt).toLocaleDateString('vi-VN')}
+                  Ngay: {new Date(orderForPrinting.createdAt || Date.now()).toLocaleTimeString('vi-VN')} {new Date(orderForPrinting.createdAt || Date.now()).toLocaleDateString('vi-VN')}
                 </p>
                 <p className="text-[10px] font-extrabold uppercase text-black">(LIÊN {copyIdx + 1})</p>
               </div>
@@ -595,28 +619,28 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
                 </div>
                 <div className="text-black text-[10px] truncate">+-----------------------+----+----------+</div>
 
-                {orderForPrinting.items.map((item, idx) => (
+                {(orderForPrinting.items || []).map((item, idx) => (
                   <div key={idx} className="flex justify-between items-center py-0.5 font-bold">
-                    <span className="w-1/2 truncate">|{item.name}</span>
-                    <span className="w-1/6 text-center">| {item.quantity} |</span>
-                    <span className="w-1/3 text-right">{item.totalPrice.toLocaleString('vi-VN')} d |</span>
+                    <span className="w-1/2 truncate">|{item?.name || 'Món'}</span>
+                    <span className="w-1/6 text-center">| {item?.quantity || 1} |</span>
+                    <span className="w-1/3 text-right">{(item?.totalPrice || 0).toLocaleString('vi-VN')} d |</span>
                   </div>
                 ))}
-                <div className="text-black text-[10px]----+----------+">+-----------------------+----+----------+</div>
+                <div className="text-black text-[10px]">+-----------------------+----+----------+</div>
               </div>
 
               {/* Summary */}
               <div className="text-right pt-1 font-extrabold text-sm border-t border-black">
-                <span>Tong cong: {orderForPrinting.totalAmount.toLocaleString('vi-VN')} d</span>
+                <span>Tong cong: {(orderForPrinting.totalAmount || 0).toLocaleString('vi-VN')} d</span>
               </div>
 
               {/* Footer */}
               <div className="text-center mt-2 pt-1 border-t border-dashed border-black font-bold text-[10px] uppercase">
-                <p>{printSettings.footerNote || 'CAM ON VA HEN GAP LAI QUY KHACH!'}</p>
+                <p>{printSettings?.footerNote || 'CAM ON VA HEN GAP LAI QUY KHACH!'}</p>
               </div>
 
               {/* Separator between Lien 1 and Lien 2 */}
-              {copyIdx < (printSettings.invoiceCopies || 2) - 1 && (
+              {copyIdx < (printSettings?.invoiceCopies || 2) - 1 && (
                 <div className="py-2 text-center text-[10px] font-bold text-black border-b-2 border-dashed border-black my-2">
                   - - - - - - - - (DAO CẮT BILL) - - - - - - - -
                 </div>
