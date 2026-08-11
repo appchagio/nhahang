@@ -615,8 +615,8 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
           {Array.from({ length: printSettings?.invoiceCopies || 2 }).map((_, copyIdx) => (
             <div
               key={copyIdx}
-              className="receipt-copy text-black bg-white font-sans p-0 leading-tight border-b border-dashed border-black pb-2 mb-2"
-              style={{ fontSize: `${currentFontSize}px` }}
+              className="receipt-copy text-black bg-white font-serif p-0 leading-tight border-b border-dashed border-black pb-2 mb-2"
+              style={{ fontSize: `${currentFontSize}px`, fontFamily: '"Times New Roman", Times, Georgia, serif' }}
             >
               
               {/* Header */}
@@ -632,15 +632,15 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
               {/* Title & Info */}
               <div className="text-center my-1">
                 <h3 className="font-black text-[1.5em] uppercase tracking-tight">HÓA ĐƠN THANH TOÁN</h3>
-                <p className="text-[1.2em] font-sans font-black text-black">Mã HD: {orderForPrinting.code || 'HD-NEW'}</p>
-                <p className="text-[1.1em] font-sans font-bold text-black">
+                <p className="text-[1.2em] font-serif font-black text-black">Mã HD: {orderForPrinting.code || 'HD-NEW'}</p>
+                <p className="text-[1.1em] font-serif font-bold text-black">
                   Ngày: {new Date(orderForPrinting.createdAt || Date.now()).toLocaleTimeString('vi-VN')} {new Date(orderForPrinting.createdAt || Date.now()).toLocaleDateString('vi-VN')}
                 </p>
                 <p className="text-[1.2em] font-black uppercase text-black">(LIÊN {copyIdx + 1})</p>
               </div>
 
-              {/* HTML GRID TABLE MATCHING USER'S IMAGE FONT 100% */}
-              <table className="w-full border-collapse border-2 border-black text-black font-sans my-2 select-none">
+              {/* HTML GRID TABLE WITH TIMES NEW ROMAN FONT */}
+              <table className="w-full border-collapse border-2 border-black text-black font-serif my-2 select-none" style={{ fontFamily: '"Times New Roman", Times, Georgia, serif' }}>
                 <thead>
                   <tr className="border-b-2 border-black font-normal text-[1.1em]">
                     <th className="border-r-2 border-black p-1 w-[45%] text-center font-normal">Ten mon</th>
