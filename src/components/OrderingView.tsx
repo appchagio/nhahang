@@ -615,7 +615,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
           {Array.from({ length: printSettings?.invoiceCopies || 2 }).map((_, copyIdx) => (
             <div
               key={copyIdx}
-              className="receipt-copy text-black bg-white font-mono p-0 leading-tight border-b border-dashed border-black pb-2 mb-2"
+              className="receipt-copy text-black bg-white font-sans p-0 leading-tight border-b border-dashed border-black pb-2 mb-2"
               style={{ fontSize: `${currentFontSize}px` }}
             >
               
@@ -632,8 +632,8 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
               {/* Title & Info */}
               <div className="text-center my-1">
                 <h3 className="font-black text-[1.5em] uppercase tracking-tight">HÓA ĐƠN THANH TOÁN</h3>
-                <p className="text-[1.2em] font-mono font-black text-black">Mã HD: {orderForPrinting.code || 'HD-NEW'}</p>
-                <p className="text-[1.1em] font-mono font-bold text-black">
+                <p className="text-[1.2em] font-sans font-black text-black">Mã HD: {orderForPrinting.code || 'HD-NEW'}</p>
+                <p className="text-[1.1em] font-sans font-bold text-black">
                   Ngày: {new Date(orderForPrinting.createdAt || Date.now()).toLocaleTimeString('vi-VN')} {new Date(orderForPrinting.createdAt || Date.now()).toLocaleDateString('vi-VN')}
                 </p>
                 <p className="text-[1.2em] font-black uppercase text-black">(LIÊN {copyIdx + 1})</p>
