@@ -243,6 +243,8 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
       alert(`Thắc mắc kết nối USB: ${res.error}`);
     }
   };
+
+  const toggleToppingSelection = (optionTitle: string, topping: ToppingOption) => {
     if (!topping) return;
     const exists = selectedToppings.some(
       (t) => t.optionTitle === optionTitle && t.topping?.id === topping.id
