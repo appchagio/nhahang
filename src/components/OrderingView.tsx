@@ -212,7 +212,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
     }
   };
 
-  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT (EXACT IMAGE GRID MATCH)
+  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT
   const handleDirectCheckoutAndPrint = () => {
     if (!activeOrder || currentItems.length === 0) return;
 
@@ -294,7 +294,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
 
             <div className="hidden sm:flex items-center space-x-1.5 text-[11px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1.5 rounded-lg shrink-0 font-bold">
               <Zap className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Mẫu Khung Kẻ Mới: {currentFontSize}px</span>
+              <span>Đồng Bộ Hình Ảnh Thực Đơn ({menu.length} Món)</span>
             </div>
           </div>
 
@@ -315,39 +315,57 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
           </div>
         </div>
 
-        {/* Menu Cards Grid */}
+        {/* Menu Cards Grid - DISPLAY SYNCED IMAGE THUMBNAILS FOR ALL DISHES */}
         <div className="flex-1 p-4 overflow-y-auto bg-[#F8FAFC]">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 xl:grid-cols-4 gap-3.5">
             {(filteredMenu || []).map((item) => (
               <div
                 key={item.id}
                 onClick={() => handleAddItemToCart(item)}
-                className="bg-white border border-slate-200 rounded-2xl p-3 hover:border-emerald-500 hover:shadow-md transition duration-150 cursor-pointer flex flex-col justify-between group active:scale-95 select-none"
+                className="bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-emerald-500 hover:shadow-lg transition duration-150 cursor-pointer flex flex-col justify-between group active:scale-95 select-none"
               >
-                <div>
-                  <div className="flex items-start justify-between gap-1">
-                    <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                {/* DISH IMAGE THUMBNAIL SYNCED WITH MENU MANAGEMENT */}
+                <div className="relative w-full h-28 bg-slate-100 overflow-hidden shrink-0">
+                  {item.imageUrl ? (
+                    <img
+                      src={item.imageUrl}
+                      alt={item.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-emerald-50/60 text-emerald-800 font-extrabold text-[11px] p-2 text-center">
+                      CHẢ GIÒ QUẢNG NGÃI
+                    </div>
+                  )}
+
+                  <div className="absolute top-2 left-2">
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-slate-900/80 backdrop-blur-sm text-white shadow-sm">
                       {item.code}
                     </span>
-                    {item.isPopular && (
-                      <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 border border-rose-200 flex items-center space-x-0.5">
+                  </div>
+
+                  {item.isPopular && (
+                    <div className="absolute top-2 right-2">
+                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-lg bg-rose-600 text-white shadow-sm flex items-center space-x-0.5">
                         <Flame className="w-3 h-3" />
                         <span>HOT</span>
                       </span>
-                    )}
-                  </div>
-
-                  <h4 className="font-extrabold text-slate-900 text-sm mt-2 group-hover:text-emerald-700 transition line-clamp-2 leading-tight">
-                    {item.name}
-                  </h4>
+                    </div>
+                  )}
                 </div>
 
-                <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
-                  <span className="font-mono text-sm font-black text-emerald-600">
-                    {(item.price || 0).toLocaleString('vi-VN')} đ
-                  </span>
-                  <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center transition">
-                    <Plus className="w-4 h-4" />
+                <div className="p-3 flex-1 flex flex-col justify-between">
+                  <h4 className="font-extrabold text-slate-900 text-sm group-hover:text-emerald-700 transition line-clamp-2 leading-tight">
+                    {item.name}
+                  </h4>
+
+                  <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between">
+                    <span className="font-mono text-sm font-black text-emerald-600">
+                      {(item.price || 0).toLocaleString('vi-VN')} đ
+                    </span>
+                    <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center transition shadow-sm">
+                      <Plus className="w-4 h-4" />
+                    </div>
                   </div>
                 </div>
               </div>
