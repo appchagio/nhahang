@@ -10,7 +10,7 @@ import {
   PaymentMethod
 } from '../types';
 import { calculateOrderSummary, createOrderItem } from '../services/calcEngine';
-import { printDirectUsbEscPos } from '../services/usbPrinterService';
+import { printDirectUsbEscPos, removeVietnameseAccents } from '../services/usbPrinterService';
 import {
   Search,
   Plus,
