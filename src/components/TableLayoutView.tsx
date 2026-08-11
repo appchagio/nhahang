@@ -1,3 +1,4 @@
+// TableLayoutView Component
 import React, { useState, useMemo } from 'react';
 import { Table, Order } from '../types';
 import {
