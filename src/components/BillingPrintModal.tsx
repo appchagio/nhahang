@@ -340,13 +340,13 @@ export const BillingPrintModal: React.FC<BillingPrintModalProps> = ({
                 </p>
               </div>
 
-              {/* Items List Table (HTML Grid Table with full accents and large 1.5em font) */}
+              {/* Items List Table (HTML Grid Table matching uploaded image 100%) */}
               <table className="w-full border-collapse border-2 border-black text-black font-sans my-2 select-none text-[11px]">
                 <thead>
                   <tr className="border-b-2 border-black font-normal">
-                    <th className="border-r-2 border-black p-1 w-[45%] text-center font-normal">Tên món</th>
+                    <th className="border-r-2 border-black p-1 w-[45%] text-center font-normal">Ten mon</th>
                     <th className="border-r-2 border-black p-1 w-[15%] text-center font-normal">SL</th>
-                    <th className="p-1 w-[40%] text-center font-normal">T.Tiền</th>
+                    <th className="p-1 w-[40%] text-center font-normal">T.Tien</th>
                   </tr>
                 </thead>
                 <tbody>
