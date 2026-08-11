@@ -40,7 +40,7 @@
     border: none !important;
     background: #ffffff !important;
     color: #000000 !important;
-    font-family: monospace, Courier, monospace !important;
+    font-family: Arial, Helvetica, "Segoe UI", Roboto, "Helvetica Neue", sans-serif !important;
   }
 
   /* Force page break after each receipt copy to trigger hardware auto-cutter */
