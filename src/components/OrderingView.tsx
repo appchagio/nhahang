@@ -642,24 +642,24 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
               {/* HTML GRID TABLE MATCHING USER'S NEW EXCEL-LIKE GRID IMAGE 100% */}
               <table className="w-full border-collapse border-2 border-black text-black font-sans my-2 select-none">
                 <thead>
-                  <tr className="border-b-2 border-black text-[1.1em] font-extrabold">
-                    <th className="border-r-2 border-black p-1 w-[45%] text-center font-black">Ten mon</th>
-                    <th className="border-r-2 border-black p-1 w-[15%] text-center font-black">SL</th>
-                    <th className="p-1 w-[40%] text-center font-black">T.Tien</th>
+                  <tr className="border-b-2 border-black font-normal text-[1.0em]">
+                    <th className="border-r-2 border-black p-1 w-[45%] text-center font-normal">Ten mon</th>
+                    <th className="border-r-2 border-black p-1 w-[15%] text-center font-normal">SL</th>
+                    <th className="p-1 w-[40%] text-center font-normal">T.Tien</th>
                   </tr>
                 </thead>
                 <tbody>
                   {(orderForPrinting.items || []).map((item, idx) => (
-                    <tr key={idx} className="border-b-2 border-black text-[1.2em] font-black">
-                      <td className="border-r-2 border-black p-1 text-left font-black">{item?.name || 'Món'}</td>
+                    <tr key={idx} className="border-b-2 border-black text-[1.35em] font-black">
+                      <td className="border-r-2 border-black p-1 text-left font-black leading-tight">{item?.name || 'Món'}</td>
                       <td className="border-r-2 border-black p-1 text-center font-black">{item?.quantity || 1}</td>
                       <td className="p-1 text-right font-black">{(item?.totalPrice || 0).toLocaleString('vi-VN')} đ</td>
                     </tr>
                   ))}
-                  <tr className="text-[1.3em] font-black">
+                  <tr className="text-[1.35em]">
                     <td className="border-r-2 border-black p-1"></td>
-                    <td className="border-r-2 border-black p-1 text-right font-black">Tổng</td>
-                    <td className="p-1 text-right font-black">{(orderForPrinting.totalAmount || 0).toLocaleString('vi-VN')}</td>
+                    <td className="border-r-2 border-black p-1 text-right font-normal text-[0.85em] align-middle">Tổng</td>
+                    <td className="p-1 text-right font-black text-[1.1em]">{(orderForPrinting.totalAmount || 0).toLocaleString('vi-VN')}</td>
                   </tr>
                 </tbody>
               </table>
