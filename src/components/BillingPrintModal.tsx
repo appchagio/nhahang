@@ -341,8 +341,8 @@ export const BillingPrintModal: React.FC<BillingPrintModalProps> = ({
                 </p>
               </div>
 
-              {/* Items List Table (HTML Grid Table matching Times New Roman 100%) */}
-              <table className="w-full border-collapse border-2 border-black text-black font-serif my-2 select-none text-[11px]" style={{ fontFamily: '"Times New Roman", Times, Georgia, serif' }}>
+              {/* Items List Table (HTML Grid Table matching user's drawing 100%) */}
+              <table className="w-full border-collapse border-2 border-black text-black font-sans my-2 select-none text-[11px]">
                 <thead>
                   <tr className="border-b-2 border-black font-normal">
                     <th className="border-r-2 border-black p-1 w-[45%] text-center font-normal">Ten mon</th>
@@ -352,13 +352,19 @@ export const BillingPrintModal: React.FC<BillingPrintModalProps> = ({
                 </thead>
                 <tbody>
                   {(order.items || []).map((item, idx) => (
-                    <tr key={idx} className="border-b-2 border-black text-[1.5em] font-black">
-                      <td className="border-r-2 border-black p-1 text-left font-black leading-tight">{item?.name || 'Món'}</td>
-                      <td className="border-r-2 border-black p-1 text-center font-black">{item?.quantity || 1}</td>
-                      <td className="p-1 text-right font-black">{(item?.totalPrice || 0).toLocaleString('vi-VN')} đ</td>
+                    <tr key={idx} className="border-b-2 border-black text-[1.55em] font-black uppercase">
+                      <td className="border-r-2 border-black p-1 text-left font-black leading-tight tracking-tight uppercase">
+                        {removeVietnameseAccents(item?.name || 'MON').toUpperCase()}
+                      </td>
+                      <td className="border-r-2 border-black p-1 text-center font-black">
+                        {item?.quantity || 1}
+                      </td>
+                      <td className="p-1 text-right font-black">
+                        {(item?.totalPrice || 0).toLocaleString('vi-VN')} đ
+                      </td>
                     </tr>
                   ))}
-                  <tr className="text-[1.5em]">
+                  <tr className="text-[1.55em]">
                     <td className="border-r-2 border-black p-1"></td>
                     <td className="border-r-2 border-black p-1 text-right font-normal text-[0.8em] align-middle">Tổng</td>
                     <td className="p-1 text-right font-black text-[1.1em]">{(order.totalAmount || 0).toLocaleString('vi-VN')}</td>
