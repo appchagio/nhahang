@@ -210,7 +210,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
     }
   };
 
-  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT (STRICTLY 1 SHEET OF PAPER)
+  // ONE-TOUCH DIRECT CHECKOUT & AUTO 2-BILL THERMAL PRINT (AUTO HARDWARE CUTTER SEPARATES 2 BILLS)
   const handleDirectCheckoutAndPrint = () => {
     if (!activeOrder || currentItems.length === 0) return;
 
@@ -233,7 +233,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
     saveCurrentOrderWithItems([]);
 
     // 4. Show Notification Toast
-    setSuccessToast(`✔ Thanh Toán Thành Công! Máy in đang in 2 bill trên 1 tờ giấy (1 sheet).`);
+    setSuccessToast(`✔ Thanh Toán Thành Công! Máy in đang in và cắt rời ${copies} bản hóa đơn.`);
     setTimeout(() => {
       setSuccessToast(null);
     }, 3500);
@@ -291,7 +291,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
 
             <div className="hidden sm:flex items-center space-x-1.5 text-[11px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1.5 rounded-lg shrink-0">
               <Zap className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Khổ In 1 Sheet (80mm): {printSettings?.invoiceCopies || 2} Bill</span>
+              <span>Tự Động Cắt: {printSettings?.invoiceCopies || 2} Bill Rời</span>
             </div>
           </div>
 
@@ -491,7 +491,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
               className="w-full py-4 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white font-black text-sm uppercase tracking-wider flex items-center justify-center space-x-2 shadow-lg shadow-emerald-200 transition transform active:scale-95 cursor-pointer"
             >
               <CreditCard className="w-5 h-5 stroke-[2.5]" />
-              <span>THANH TOÁN ĐƠN HÀNG (IN {printSettings?.invoiceCopies || 2} BILL)</span>
+              <span>THANH TOÁN ĐƠN HÀNG (IN {printSettings?.invoiceCopies || 2} BILL RỜI)</span>
             </button>
           </div>
 
@@ -583,7 +583,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
         </div>
       )}
 
-      {/* DIRECT THERMAL RECEIPT WRAPPER - STRICTLY 1 SHEET OF PAPER */}
+      {/* DIRECT THERMAL RECEIPT WRAPPER - TRIGGER AUTOMATIC HARDWARE AUTO-CUTTER BETWEEN BILL 1 AND BILL 2 */}
       {orderForPrinting && (
         <div id="printable-receipt-wrapper" className="hidden print:block">
           {Array.from({ length: printSettings?.invoiceCopies || 2 }).map((_, copyIdx) => (
@@ -638,13 +638,6 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
               <div className="text-center mt-1 pt-0.5 border-t border-dashed border-black font-bold text-[9px] uppercase">
                 <p>{printSettings?.footerNote || 'CAM ON VA HEN GAP LAI QUY KHACH!'}</p>
               </div>
-
-              {/* Separator between Lien 1 and Lien 2 */}
-              {copyIdx < (printSettings?.invoiceCopies || 2) - 1 && (
-                <div className="py-1 text-center text-[9px] font-bold text-black border-b border-dashed border-black my-1">
-                  - - - - - - - - (DAO CẮT BILL) - - - - - - - -
-                </div>
-              )}
             </div>
           ))}
         </div>
