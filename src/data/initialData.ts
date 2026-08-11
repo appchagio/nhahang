@@ -193,9 +193,11 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
 ];
 
 export const INITIAL_PRINT_SETTINGS: PrintSettings = {
-  restaurantName: 'CHẢ GIÒ QUẢNG NGÃI',
-  address: '128 Đường Lê Lợi, Phường Bến Thành, Quận 1, TP. Hồ Chí Minh',
-  phone: '0908 123 456 - 028 3822 9999',
+  restaurantName: 'CHA GIO BAP QUANG NGAI',
+  address: '87, Hùng Vương, Phường Bà Rịa, TP. Hồ Chí Minh',
+  phone: '0972371722',
+  wifiName: 'khanh vi',
+  wifiPassword: '0914683351',
   paperSize: 'K80',
   tempPaperSize: 'K80',
   shiftPaperSize: 'K80',
@@ -208,13 +210,14 @@ export const INITIAL_PRINT_SETTINGS: PrintSettings = {
   shiftCopies: 1,
   optimizeReceiptLength: true,
   enableAutoCut: true,
-  headerNote: 'Chào mừng quý khách đến với Chả Giò Quảng Ngãi!',
-  footerNote: 'Cảm ơn và hẹn gặp lại quý khách!',
-  showVat: true,
-  showQrCode: true,
+  useAsciiGridTable: true,
+  headerNote: 'Chào mừng quý khách!',
+  footerNote: 'CAM ON VA HEN GAP LAI QUY KHACH!',
+  showVat: false,
+  showQrCode: false,
   bankAccount: {
     bankName: 'MBBANK',
-    accountNo: '0908123456',
-    accountName: 'CHA GIO QUANG NGAI'
+    accountNo: '0972371722',
+    accountName: 'CHA GIO BAP QUANG NGAI'
   }
 };
