@@ -1,3 +1,4 @@
+// PrintTemplateSettingsModal Component
 import React, { useState } from 'react';
 import { PrintSettings } from '../types';
 import {
@@ -6,12 +7,10 @@ import {
   Save,
   Cpu,
   RefreshCw,
-  Radio,
   Minus,
   Plus,
   CheckCircle2,
-  Scissors,
-  ScissorsLineDashed
+  Zap
 } from 'lucide-react';
 
 interface PrintTemplateSettingsModalProps {
@@ -30,7 +29,7 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
     connectionType: settings.connectionType || 'USB',
     usbDeviceName: settings.usbDeviceName || 'Máy In USB POS (a5c:5843)',
     lanIpAddress: settings.lanIpAddress || '192.168.1.200',
-    fontSizePx: settings.fontSizePx || 13,
+    fontSizePx: settings.fontSizePx || 26,
     invoiceCopies: settings.invoiceCopies ?? 2,
     tempInvoiceCopies: settings.tempInvoiceCopies ?? 1,
     shiftCopies: settings.shiftCopies ?? 1,
@@ -61,10 +60,10 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
   };
 
   const handleTestPrint = () => {
-    setTestPrintMessage('Đang phát lệnh in thử nghiệm tới máy in POS...');
+    setTestPrintMessage('Đang phát lệnh in thử tới máy in bill...');
     setTimeout(() => {
       window.print();
-      setTestPrintMessage('Hoàn tất in thử nghiệm!');
+      setTestPrintMessage('In thử hoàn tất!');
       setTimeout(() => setTestPrintMessage(null), 2500);
     }, 300);
   };
@@ -76,28 +75,38 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 select-none">
-      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl animate-in zoom-in-95 flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[92vh] overflow-hidden shadow-2xl flex flex-col my-auto border border-slate-100 animate-in zoom-in-95 duration-150">
         
-        {/* Modal Header */}
-        <div className="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
-          <div className="flex items-center space-x-2.5">
-            <Printer className="w-5 h-5 text-emerald-400" />
-            <h3 className="font-extrabold text-base text-white">
-              Cấu Hình Máy In Hóa Đơn - CHẢ GIÒ QUẢNG NGÃI
-            </h3>
+        {/* MODAL HEADER */}
+        <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800 shrink-0">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center border border-blue-500/30">
+              <Printer className="w-5 h-5 stroke-[2.5]" />
+            </div>
+            <div>
+              <h3 className="font-extrabold text-base tracking-tight text-white">Cài Đặt Máy In & Mẫu Hóa Đơn</h3>
+              <p className="text-[11px] text-slate-400 font-medium">Cấu hình kết nối USB, mạng LAN, số bản in và kích thước chữ</p>
+            </div>
           </div>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white rounded-lg transition">
+
+          <button
+            onClick={onClose}
+            className="w-9 h-9 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6 text-xs flex-1 bg-white">
+        {/* MODAL BODY */}
+        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800 text-xs">
           
           {testPrintMessage && (
-            <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 font-bold flex items-center space-x-2 animate-in fade-in">
-              <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600 shrink-0" />
-              <span>{testPrintMessage}</span>
+            <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 font-extrabold rounded-2xl flex items-center justify-between animate-in fade-in">
+              <div className="flex items-center space-x-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>{testPrintMessage}</span>
+              </div>
             </div>
           )}
 
@@ -131,7 +140,7 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
               </label>
             </div>
 
-            {/* CARD KẾT NỐI CỔNG USB / LAN MATCHING THE IMAGE */}
+            {/* CARD KẾT NỐI CỔNG USB / LAN */}
             <div className="p-4 bg-[#fbf9f4] border border-[#f0ebe0] rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
               <div className="flex items-center space-x-3.5">
                 <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shrink-0 border border-amber-200/80 shadow-sm">
@@ -162,7 +171,6 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                 </div>
               </div>
 
-              {/* Action Buttons on the Right */}
               <div className="flex items-center space-x-2 shrink-0">
                 <button
                   type="button"
@@ -184,7 +192,7 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
               </div>
             </div>
 
-            {/* HƯỚNG DẪN IN NGẦM KHÔNG CẦN BẤM IN TRÊN CỬA SỔ BẢNG HỎI */}
+            {/* HƯỚNG DẪN IN NGẦM SILENT POS PRINTING */}
             <div className="p-4 bg-emerald-50/80 border border-emerald-200 rounded-2xl space-y-2">
               <div className="flex items-center space-x-2 text-emerald-900 font-extrabold text-xs">
                 <Zap className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -200,11 +208,6 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
               <p className="text-[10px] text-slate-600 italic">
                 👉 <strong>Cách làm:</strong> Nhấp chuột phải vào biểu tượng Google Chrome trên màn hình Desktop -&gt; Chọn Properties -&gt; Tại ô Target, cách ra 1 dấu cách và dán <code>--kiosk-printing</code> vào cuối -&gt; Bấm OK.
               </p>
-            </div>
-                  <Radio className="w-4 h-4 text-emerald-400" />
-                  <span>In Thử Nghiệm</span>
-                </button>
-              </div>
             </div>
           </div>
 
@@ -241,30 +244,58 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
               </select>
             </div>
 
-            {/* Column 3: Mẫu in phiếu giao ca */}
+            {/* Column 3: Mẫu in kết ca */}
             <div className="space-y-2">
               <label className="font-bold text-slate-900 text-xs block">
-                Mẫu in phiếu giao ca
+                Mẫu in kết ca - Khổ giấy in kết ca
               </label>
               <select
                 value={form.shiftPaperSize || 'K80'}
                 onChange={(e) => handleFormChange('shiftPaperSize', e.target.value as 'K80' | 'K57')}
                 className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-800 font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition"
               >
-                <option value="K80">Mẫu in mặc định - Khổ K80</option>
-                <option value="K57">Mẫu in mặc định - Khổ K57</option>
+                <option value="K80">Mẫu in kết ca - Khổ K80 (80mm)</option>
+                <option value="K57">Mẫu in kết ca - Khổ K57 (57mm)</option>
               </select>
             </div>
 
           </div>
 
-          {/* SECTION 3: FONT SIZE & COUNTERS ROW 2 */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end pt-2">
+          {/* SECTION 3: COUNTERS ROW 2 */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             
-            {/* Font size */}
+            {/* Invoice Copies */}
             <div className="space-y-2">
               <label className="font-bold text-slate-900 text-xs block">
-                Kích thước font chữ in hóa đơn
+                Số bản in hóa đơn khi thanh toán (liên)
+              </label>
+              <div className="flex items-center space-x-5 py-1">
+                <button
+                  type="button"
+                  onClick={() => handleCounterChange('invoiceCopies', -1)}
+                  className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center font-bold text-slate-700 transition shadow-sm"
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+
+                <span className="font-mono text-base font-extrabold text-slate-900 w-8 text-center">
+                  {form.invoiceCopies}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => handleCounterChange('invoiceCopies', 1)}
+                  className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center font-bold text-slate-700 transition shadow-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Font Size Select */}
+            <div className="space-y-2">
+              <label className="font-bold text-slate-900 text-xs block">
+                Kích thước chữ in hóa đơn (Font size)
               </label>
               <select
                 value={form.fontSizePx}
@@ -274,7 +305,7 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                 <option value={14}>Size 14 (14px - Nhỏ Gọn)</option>
                 <option value={18}>Size 18 (18px - Vừa Vặn Rõ Nét)</option>
                 <option value={22}>Size 22 (22px - Chữ Nổi Bật - Gấp 2 Lần)</option>
-                <option value={26}>Size 26 (26px - Chữ To Rõ - Mặc Định)</option>
+                <option value={26}>Size 26 (26px - Chữ To Rõ - Mặc Định Mới)</option>
                 <option value={32}>Size 32 (32px - Chữ Siêu To - Gấp 3 Lần)</option>
                 <option value={38}>Size 38 (38px - Cực Đại Siêu Rõ - Gấp 4 Lần)</option>
               </select>
@@ -291,223 +322,96 @@ export const PrintTemplateSettingsModal: React.FC<PrintTemplateSettingsModalProp
                   onClick={() => handleCounterChange('tempInvoiceCopies', -1)}
                   className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center font-bold text-slate-700 transition shadow-sm"
                 >
-                  <Minus className="w-4 h-4 text-slate-600" />
+                  <Minus className="w-4 h-4" />
                 </button>
-                <span className="font-mono font-black text-slate-900 text-base min-w-[20px] text-center">
-                  {form.tempInvoiceCopies}
+
+                <span className="font-mono text-base font-extrabold text-slate-900 w-8 text-center">
+                  {form.tempInvoiceCopies || 1}
                 </span>
+
                 <button
                   type="button"
                   onClick={() => handleCounterChange('tempInvoiceCopies', 1)}
                   className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center font-bold text-slate-700 transition shadow-sm"
                 >
-                  <Plus className="w-4 h-4 text-slate-600" />
-                </button>
-              </div>
-            </div>
-
-            {/* Shift Copies */}
-            <div className="space-y-2">
-              <label className="font-bold text-slate-900 text-xs block">
-                Số bản in (liên)
-              </label>
-              <div className="flex items-center space-x-5 py-1">
-                <button
-                  type="button"
-                  onClick={() => handleCounterChange('shiftCopies', -1)}
-                  className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center font-bold text-slate-700 transition shadow-sm"
-                >
-                  <Minus className="w-4 h-4 text-slate-600" />
-                </button>
-                <span className="font-mono font-black text-slate-900 text-base min-w-[20px] text-center">
-                  {form.shiftCopies}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleCounterChange('shiftCopies', 1)}
-                  className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center font-bold text-slate-700 transition shadow-sm"
-                >
-                  <Plus className="w-4 h-4 text-slate-600" />
+                  <Plus className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
           </div>
 
-          {/* SECTION 4: INVOICE COPIES ROW 3 */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-center pt-2">
-            <div className="space-y-2">
-              <label className="font-bold text-slate-900 text-xs block">
-                Số bản in hóa đơn (liên)
-              </label>
-              <div className="flex items-center space-x-5 py-1">
-                <button
-                  type="button"
-                  onClick={() => handleCounterChange('invoiceCopies', -1)}
-                  className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center font-bold text-slate-700 transition shadow-sm"
-                >
-                  <Minus className="w-4 h-4 text-slate-600" />
-                </button>
-                <span className="font-mono font-black text-slate-900 text-base min-w-[20px] text-center">
-                  {form.invoiceCopies}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleCounterChange('invoiceCopies', 1)}
-                  className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center font-bold text-slate-700 transition shadow-sm"
-                >
-                  <Plus className="w-4 h-4 text-slate-600" />
-                </button>
-              </div>
-            </div>
+          {/* STORE INFORMATION INPUTS */}
+          <div className="pt-4 border-t border-slate-200 space-y-4">
+            <h4 className="font-extrabold text-slate-900 text-xs uppercase tracking-wider">Thông Tin Cửa Hàng In Trên Bill</h4>
 
-            {/* Auto-Cut Toggle */}
-            <div className="p-3.5 bg-blue-50/80 border border-blue-200 rounded-2xl flex items-center justify-between">
-              <div className="space-y-0.5">
-                <span className="font-bold text-blue-900 text-xs flex items-center space-x-1.5">
-                  <Scissors className="w-4 h-4 text-blue-600" />
-                  <span>Tự động cắt giấy bill:</span>
-                </span>
-                <p className="text-[10px] text-blue-700 font-medium">
-                  Phát lệnh dao cắt tự động sau khi hoàn tất in
-                </p>
-              </div>
-
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={form.enableAutoCut}
-                  onChange={(e) => handleFormChange('enableAutoCut', e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
-              </label>
-            </div>
-
-            {/* Optimize Receipt Length Toggle */}
-            <div className="p-3.5 bg-emerald-50/80 border border-emerald-200 rounded-2xl flex items-center justify-between">
-              <div className="space-y-0.5">
-                <span className="font-bold text-emerald-900 text-xs flex items-center space-x-1.5">
-                  <ScissorsLineDashed className="w-4 h-4 text-emerald-600" />
-                  <span>Tối ưu chiều dài bill:</span>
-                </span>
-                <p className="text-[10px] text-emerald-700 font-medium">
-                  Nén lề, giảm 30-50% chiều dài cuộn giấy
-                </p>
-              </div>
-
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={form.optimizeReceiptLength}
-                  onChange={(e) => handleFormChange('optimizeReceiptLength', e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
-              </label>
-            </div>
-          </div>
-
-          {/* SECTION 5: THÔNG TIN THƯƠNG HIỆU */}
-          <div className="pt-4 border-t border-slate-200 space-y-3">
-            <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[11px]">
-              Thông tin Thương Hiệu & VietQR
-            </h4>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-slate-600 font-semibold block">Tên Nhà Hàng / Quán:</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="font-bold text-slate-700 text-xs">Tên cửa hàng / thương hiệu:</label>
                 <input
                   type="text"
                   value={form.restaurantName}
                   onChange={(e) => handleFormChange('restaurantName', e.target.value)}
-                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-bold"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 font-bold focus:outline-none focus:border-blue-500"
                 />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-slate-600 font-semibold block">Số điện thoại liên hệ:</label>
+              <div className="space-y-1.5">
+                <label className="font-bold text-slate-700 text-xs">Số điện thoại liên hệ:</label>
                 <input
                   type="text"
                   value={form.phone}
                   onChange={(e) => handleFormChange('phone', e.target.value)}
-                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 font-bold focus:outline-none focus:border-blue-500"
                 />
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-slate-600 font-semibold block">Tên Wifi quán:</label>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="font-bold text-slate-700 text-xs">Địa chỉ cửa hàng:</label>
                 <input
                   type="text"
-                  placeholder="khanh vi"
+                  value={form.address}
+                  onChange={(e) => handleFormChange('address', e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 font-bold focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-bold text-slate-700 text-xs">Tên Wifi cửa hàng:</label>
+                <input
+                  type="text"
                   value={form.wifiName || ''}
                   onChange={(e) => handleFormChange('wifiName', e.target.value)}
-                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-bold"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 font-bold focus:outline-none focus:border-blue-500"
                 />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-slate-600 font-semibold block">Mật khẩu Wifi:</label>
+              <div className="space-y-1.5">
+                <label className="font-bold text-slate-700 text-xs">Mật khẩu Wifi:</label>
                 <input
                   type="text"
-                  placeholder="0914683351"
                   value={form.wifiPassword || ''}
                   onChange={(e) => handleFormChange('wifiPassword', e.target.value)}
-                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 font-bold focus:outline-none focus:border-blue-500"
                 />
               </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-slate-600 font-semibold block">Địa chỉ trên hóa đơn:</label>
-              <input
-                type="text"
-                value={form.address}
-                onChange={(e) => handleFormChange('address', e.target.value)}
-                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800"
-              />
-            </div>
-
-            <div className="p-3.5 bg-amber-50/80 border border-amber-200 rounded-2xl flex items-center justify-between mt-2">
-              <div className="space-y-0.5">
-                <span className="font-bold text-amber-900 text-xs flex items-center space-x-1.5">
-                  <Printer className="w-4 h-4 text-amber-600" />
-                  <span>Khung Bảng Mẫu In Ascii Grid (Chuẩn Máy In Giấy Nhiệt POS):</span>
-                </span>
-                <p className="text-[10px] text-amber-800 font-medium">
-                  Định dạng khung bảng ASCII (+-----+----+-----+) siêu ngắn gọn cắt lề ngắn nhất như ảnh thực tế.
-                </p>
-              </div>
-
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={form.useAsciiGridTable ?? true}
-                  onChange={(e) => handleFormChange('useAsciiGridTable', e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-600"></div>
-              </label>
             </div>
           </div>
 
-          {/* FOOTER ACTIONS */}
+          {/* FOOTER & BUTTONS */}
           <div className="pt-4 border-t border-slate-200 flex items-center justify-end space-x-3">
             <button
               type="button"
               onClick={onClose}
-              className="py-2.5 px-4 rounded-xl text-slate-500 hover:text-slate-800 font-bold text-xs"
+              className="px-6 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition"
             >
-              Hủy
+              Đóng
             </button>
-
             <button
               type="submit"
-              className="py-3 px-6 bg-slate-900 hover:bg-black text-white font-extrabold text-xs rounded-xl shadow-md transition flex items-center space-x-2"
+              className="px-8 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-lg shadow-blue-200 transition flex items-center space-x-2"
             >
-              <Save className="w-4 h-4 text-emerald-400" />
+              <Save className="w-4 h-4" />
               <span>Lưu Cấu Hình Máy In</span>
             </button>
           </div>
