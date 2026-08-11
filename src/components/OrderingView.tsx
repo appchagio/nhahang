@@ -25,8 +25,10 @@ import {
   Tag,
   MessageSquare,
   Users,
+  Award,
   Phone,
-  Gift
+  Gift,
+  ShoppingBag
 } from 'lucide-react';
 
 interface OrderingViewProps {
@@ -210,34 +212,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
       {/* LEFT COLUMN: Table Quick Bar + Menu Grid */}
       <div className="flex-1 flex flex-col min-w-0 border-r border-slate-200">
         
-        {/* Table Selector Header */}
-        <div className="p-3 bg-white border-b border-slate-200 flex items-center justify-between gap-3 overflow-x-auto select-none">
-          <div className="flex items-center space-x-2 shrink-0">
-            <span className="text-xs font-semibold uppercase text-slate-500">Chọn bàn:</span>
-          </div>
 
-          <div className="flex items-center space-x-2 overflow-x-auto py-1 scrollbar-none">
-            {tables.map((tbl) => {
-              const isActive = tbl.id === activeTableId;
-              let badgeColor = 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200';
-              if (tbl.status === 'OCCUPIED') badgeColor = 'bg-blue-50 text-blue-700 border border-blue-200 font-semibold';
-              if (tbl.status === 'WAITING_PAYMENT') badgeColor = 'bg-amber-50 text-amber-700 border border-amber-200 font-semibold';
-              if (isActive) badgeColor = 'bg-blue-600 text-white font-bold shadow-sm ring-2 ring-blue-500/30';
-
-              return (
-                <button
-                  key={tbl.id}
-                  onClick={() => onSelectTable(tbl.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium shrink-0 flex items-center space-x-1.5 transition ${badgeColor}`}
-                >
-                  <span>{tbl.name}</span>
-                  {tbl.status === 'OCCUPIED' && <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />}
-                  {tbl.status === 'WAITING_PAYMENT' && <span className="w-2 h-2 rounded-full bg-amber-500 animate-bounce" />}
-                </button>
-              );
-            })}
-          </div>
-        </div>
 
         {/* Search & Category Filter */}
         <div className="p-3 bg-white border-b border-slate-200 space-y-3">
@@ -348,15 +323,13 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
         <div className="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="text-base font-bold text-slate-800">{currentTable?.name || 'Chưa chọn bàn'}</h3>
-              {currentTable?.floor && (
-                <span className="text-xs px-2 py-0.5 rounded font-mono bg-blue-100 text-blue-700 font-bold border border-blue-200">
-                  {currentTable.floor}
-                </span>
-              )}
+              <h3 className="text-base font-extrabold text-slate-800">Đơn Hàng Mang Về</h3>
+              <span className="text-xs px-2 py-0.5 rounded font-mono bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">
+                Mang Về
+              </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5 flex items-center space-x-1">
-              <Users className="w-3.5 h-3.5 text-slate-400" />
+              <ShoppingBag className="w-3.5 h-3.5 text-slate-400" />
               <span>Mã HD: {activeOrder?.code || 'HD-NEW'}</span>
             </p>
           </div>
