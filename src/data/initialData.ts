@@ -56,7 +56,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm5',
     code: 'CG05',
-    name: 'Bò lá lốt + Bún',
+    name: 'Bò lá lốt',
     price: 47000,
     category: 'Món chính',
     imageUrl: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80',
@@ -68,7 +68,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm6',
     code: 'CG06',
-    name: 'Nem nướng + Bún',
+    name: 'Nem nướng',
     price: 42000,
     category: 'Món chính',
     imageUrl: 'https://images.unsplash.com/photo-1529042410759-befb1204b468?auto=format&fit=crop&w=600&q=80',
@@ -104,7 +104,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm9',
     code: 'CG09',
-    name: 'Tô bún nem + chả giò',
+    name: 'Tô bún',
     price: 35000,
     category: 'Bún & Cuốn',
     imageUrl: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80',
@@ -116,7 +116,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm10',
     code: 'CG10',
-    name: 'Bún đậu mắm tôm',
+    name: 'Bún đậu',
     price: 40000,
     category: 'Bún & Cuốn',
     imageUrl: 'https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&w=600&q=80',
@@ -128,7 +128,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm11',
     code: 'CG11',
-    name: 'Thập cẩm (12 cuốn)',
+    name: 'Thập cẩm',
     price: 65000,
     category: 'Món Đặc Biệt',
     imageUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80',
@@ -140,7 +140,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm12',
     code: 'CG12',
-    name: 'Gỏi cuốn (1 cuốn)',
+    name: 'Gỏi cuốn',
     price: 6000,
     category: 'Bún & Cuốn',
     imageUrl: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80',
@@ -152,7 +152,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm13',
     code: 'CG13',
-    name: 'Nửa Chả giò bắp',
+    name: '1/2 Chả giò bắp',
     price: 18500,
     category: 'Nửa Phần',
     imageUrl: 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=600&q=80',
@@ -164,7 +164,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm14',
     code: 'CG14',
-    name: 'Nửa Chả giò cá',
+    name: '1/2 Chả giò cá',
     price: 18500,
     category: 'Nửa Phần',
     imageUrl: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80',
@@ -176,7 +176,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm15',
     code: 'CG15',
-    name: 'Nửa Chả giò tôm',
+    name: '1/2 Chả giò tôm',
     price: 23500,
     category: 'Nửa Phần',
     imageUrl: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=600&q=80',
@@ -188,7 +188,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm16',
     code: 'CG16',
-    name: 'Nửa Chả giò thịt',
+    name: '1/2 Chả giò thịt',
     price: 21000,
     category: 'Nửa Phần',
     imageUrl: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=600&q=80',
@@ -200,7 +200,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm17',
     code: 'CG17',
-    name: 'Nửa Bò lá lốt',
+    name: '1/2 Bò lá lốt',
     price: 23500,
     category: 'Nửa Phần',
     imageUrl: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80',
@@ -212,7 +212,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm18',
     code: 'CG18',
-    name: 'Nửa Nem nướng',
+    name: '1/2 Nem nướng',
     price: 21000,
     category: 'Nửa Phần',
     imageUrl: 'https://images.unsplash.com/photo-1529042410759-befb1204b468?auto=format&fit=crop&w=600&q=80',
@@ -224,7 +224,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm19',
     code: 'CG19',
-    name: 'Nửa Bánh xèo',
+    name: '1/2 Bánh xèo',
     price: 25000,
     category: 'Nửa Phần',
     imageUrl: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=600&q=80',
@@ -236,7 +236,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm20',
     code: 'NU01',
-    name: 'Nước ngọt lon',
+    name: 'Nước ngọt',
     price: 15000,
     category: 'Giải Khát',
     imageUrl: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80',
@@ -248,7 +248,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm21',
     code: 'NU02',
-    name: 'Nước bí đao ly',
+    name: 'Nước bí đao',
     price: 10000,
     category: 'Giải Khát',
     imageUrl: 'https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=600&q=80',
@@ -260,7 +260,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm22',
     code: 'NU03',
-    name: 'Nước trà tắc ly',
+    name: 'Nước trà tắc',
     price: 10000,
     category: 'Giải Khát',
     imageUrl: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80',
@@ -296,7 +296,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm25',
     code: 'NU06',
-    name: 'Bò Húc lon',
+    name: 'Bò Húc',
     price: 17000,
     category: 'Giải Khát',
     imageUrl: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80',
@@ -308,7 +308,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
   {
     id: 'm26',
     code: 'NU07',
-    name: 'Rau câu hũ',
+    name: 'Rau câu',
     price: 8000,
     category: 'Tráng Miệng',
     imageUrl: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=600&q=80',
