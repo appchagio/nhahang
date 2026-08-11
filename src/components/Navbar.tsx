@@ -4,7 +4,6 @@ import {
   LayoutGrid,
   BookOpen,
   Receipt,
-  Cpu,
   Settings,
   Zap,
   Printer,
@@ -12,9 +11,6 @@ import {
   HardDrive,
   FileSpreadsheet,
   BarChart3,
-  Bot,
-  Banknote,
-  Gamepad2,
   Key,
   ExternalLink
 } from 'lucide-react';
@@ -148,52 +144,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="hidden md:inline">Báo Cáo & Analytics</span>
               <span className="md:hidden">Thống kê</span>
             </button>
-
-            <button
-              onClick={() => setActiveTab('ARCHITECT')}
-              className={`flex items-center space-x-2 px-3.5 py-2 rounded-lg font-medium text-sm transition-all duration-150 ${
-                activeTab === 'ARCHITECT'
-                  ? 'bg-blue-600 text-white shadow-sm font-semibold'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200 bg-white'
-              }`}
-            >
-              <Cpu className="w-4 h-4" />
-              <span className="hidden lg:inline">Kiến trúc & Tiered Storage</span>
-              <span className="lg:hidden">Hệ thống</span>
-            </button>
           </nav>
 
           {/* System Telemetry & Quick Tool Buttons */}
           <div className="flex items-center space-x-2">
-            
-            {/* AI Assistant Button */}
-            <button
-              onClick={onOpenAiAssistant}
-              title="Mở Trợ Lý Trí Tuệ Nhân Tạo AI"
-              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-lg border border-purple-200 transition shadow-sm"
-            >
-              <Bot className="w-4 h-4 text-purple-600" />
-              <span className="hidden xl:inline">Trợ Lý AI</span>
-            </button>
-
-            {/* Shift Manager Button */}
-            <button
-              onClick={onOpenShiftManager}
-              title="Quản Lý Ca Làm Việc & Kiểm Két Tiền Mặt"
-              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-lg border border-slate-200 transition shadow-sm"
-            >
-              <Banknote className="w-4 h-4 text-emerald-600" />
-              <span className="hidden xl:inline">Giao Ca</span>
-            </button>
-
-            {/* Speed Game Button */}
-            <button
-              onClick={onOpenSpeedGame}
-              title="Minigame Luyện Gõ Order 60s Cho Nhân Viên Mới"
-              className="p-1.5 text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg border border-amber-200 transition shadow-sm"
-            >
-              <Gamepad2 className="w-4 h-4 text-amber-600" />
-            </button>
 
             {/* Gemini API Key Button with Red Note */}
             <button
