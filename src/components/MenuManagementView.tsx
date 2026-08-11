@@ -1,3 +1,4 @@
+// MenuManagementView Component
 import React, { useState } from 'react';
 import { MenuItem, ToppingOption } from '../types';
 import { compressImageFile } from '../services/imageOptimizer';
