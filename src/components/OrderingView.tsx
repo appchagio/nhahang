@@ -299,7 +299,7 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
 
             <div className="hidden sm:flex items-center space-x-1.5 text-[11px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1.5 rounded-lg shrink-0 font-bold">
               <Zap className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-              <span>Tự Động In Trực Tiếp Máy In Rongta RP355UL (USB)</span>
+              <span>Tự Động Nhận & Lưu Máy In USB ({printSettings?.usbDeviceName || 'Máy in USB POS'})</span>
             </div>
           </div>
 
