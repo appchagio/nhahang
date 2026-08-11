@@ -356,7 +356,7 @@ export const BillingPrintModal: React.FC<BillingPrintModalProps> = ({
                       <td className="border-r-2 border-black p-1 text-left font-black text-[0.85em] uppercase tracking-tight font-sans leading-tight">
                         {removeVietnameseAccents(item?.name || 'MON').toUpperCase()}
                       </td>
-                      <td className="border-r-2 border-black p-1 text-center font-black text-[0.9em]">
+                      <td className="border-r-2 border-black p-1 text-center font-black text-[1.25em] leading-none">
                         {item?.quantity || 1}
                       </td>
                       <td className="p-1 text-right font-black text-[0.9em]">
