@@ -1,3 +1,4 @@
+// BillingPrintModal Component
 import React, { useState } from 'react';
 import { Order, PaymentMethod, PrintSettings } from '../types';
 import {
