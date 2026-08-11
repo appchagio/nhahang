@@ -11,6 +11,7 @@ import {
 import { POSStorageEngine } from './services/storageEngine';
 import { calculateOrderSummary } from './services/calcEngine';
 import { GoogleSheetsService } from './services/googleSheetsService';
+import { initAutoUsbPrinterReconnection } from './services/usbPrinterService';
 
 // Components
 import { Navbar } from './components/Navbar';
@@ -30,6 +31,11 @@ import { GeminiApiKeyModal } from './components/GeminiApiKeyModal';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'ORDERING' | 'TABLES' | 'MENU' | 'INVOICES' | 'ARCHITECT' | 'ANALYTICS'>('ORDERING');
+
+  // Auto-connect paired USB thermal printer on app launch / printer power ON
+  useEffect(() => {
+    initAutoUsbPrinterReconnection();
+  }, []);
   
   // Core State
   const [tables, setTables] = useState<Table[]>(() => POSStorageEngine.getTables());
