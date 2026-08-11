@@ -55,20 +55,20 @@ export function generateEscPosBuffer(order: Order, settings: PrintSettings): Uin
 
   addStr('------------------------------------------------\n');
 
-  // ASCII Table Grid matching uploaded photo 100% with SL column first
+  // ASCII Table Grid with SL column FIRST
   addBytes([0x1b, 0x61, 0x00]); // Left Align
   addStr('+----+-----------------------+----------+\n');
   addStr('| SL |Ten mon                |   T.Tien |\n');
   addStr('+----+-----------------------+----------+\n');
 
-  // Items List - SL column first, Super Bold Uppercase Dish Names with Solid Line Separators
+  // Items List - SL column first, Double Height for SL and Dish Name
   (order.items || []).forEach((item) => {
     const rawName = removeVietnameseAccents(item.name || 'MON').toUpperCase();
     const paddedName = rawName.length > 23 ? rawName.substring(0, 23) : rawName.padEnd(23, ' ');
     const qtyStr = String(item.quantity || 1).padStart(2, ' ');
     const priceStr = `${(item.totalPrice || 0).toLocaleString('vi-VN')} d`.padStart(9, ' ');
 
-    addBytes([0x1d, 0x21, 0x01]); // Double height font (+75% size enlarge)
+    addBytes([0x1d, 0x21, 0x01]); // Double Height font enlarge (+75% size enlarge)
     addBytes([0x1b, 0x45, 0x00]); // Normal (No bold)
     addStr(`| ${qtyStr} |${paddedName}|${priceStr} |\n`);
     addBytes([0x1d, 0x21, 0x00]); // Reset font size
@@ -109,10 +109,16 @@ export async function pairUsbPrinterDevice(): Promise<{ success: boolean; device
     });
 
     if (device) {
-      await device.open();
-      if (device.configuration === null) {
-        await device.selectConfiguration(1);
+      localStorage.setItem('sunmi_usb_printer_paired', 'true');
+      localStorage.setItem('sunmi_usb_vendor_id', String(device.vendorId));
+
+      try {
+        if (!device.opened) await device.open();
+        if (device.configuration === null) await device.selectConfiguration(1);
+      } catch (e) {
+        console.log('USB initial connect notice:', e);
       }
+
       return {
         success: true,
         deviceName: `${device.productName || 'Máy in USB POS'} (VendorID: ${device.vendorId.toString(16)})`
@@ -126,52 +132,117 @@ export async function pairUsbPrinterDevice(): Promise<{ success: boolean; device
   }
 }
 
-// Direct WebUSB Hardware Printer Output Function (Zero Drivers Needed!)
-export async function printDirectUsbEscPos(order: Order, settings: PrintSettings): Promise<boolean> {
-  try {
-    if ('usb' in navigator) {
-      const devices = await (navigator as any).usb.getDevices();
-      if (devices && devices.length > 0) {
-        const device = devices[0];
-        await device.open();
-        if (device.configuration === null) {
-          await device.selectConfiguration(1);
-        }
-        
-        let interfaceNumber = 0;
-        let endpointNumber = 1;
+// Safe Helper to Connect USB Device (Auto handles power reboots & app restarts)
+async function connectAndClaimUsbDevice(device: any): Promise<{ interfaceNumber: number; endpointNumber: number }> {
+  if (!device.opened) {
+    await device.open();
+  }
+  if (device.configuration === null) {
+    await device.selectConfiguration(1);
+  }
 
-        if (device.configuration && device.configuration.interfaces) {
-          for (const iface of device.configuration.interfaces) {
-            for (const alt of iface.alternates) {
-              if (alt.interfaceClass === 7 || alt.interfaceClass === 255 || alt.interfaceClass === 0) {
-                interfaceNumber = iface.interfaceNumber;
-                for (const ep of alt.endpoints) {
-                  if (ep.direction === 'out') {
-                    endpointNumber = ep.endpointNumber;
-                    break;
-                  }
-                }
-              }
+  let interfaceNumber = 0;
+  let endpointNumber = 1;
+
+  if (device.configuration && device.configuration.interfaces) {
+    for (const iface of device.configuration.interfaces) {
+      for (const alt of iface.alternates) {
+        if (alt.interfaceClass === 7 || alt.interfaceClass === 255 || alt.interfaceClass === 0) {
+          interfaceNumber = iface.interfaceNumber;
+          for (const ep of alt.endpoints) {
+            if (ep.direction === 'out') {
+              endpointNumber = ep.endpointNumber;
+              break;
             }
           }
         }
-
-        await device.claimInterface(interfaceNumber);
-
-        const copies = settings.invoiceCopies || 2;
-        for (let i = 0; i < copies; i++) {
-          const rawBuffer = generateEscPosBuffer(order, settings);
-          await device.transferOut(endpointNumber, rawBuffer);
-        }
-
-        await device.releaseInterface(interfaceNumber);
-        await device.close();
-        return true;
       }
     }
+  }
 
-    if ('serial' in navigator) {
+  try {
+    await device.claimInterface(interfaceNumber);
+  } catch (e) {
+    // Already claimed or re-bound, proceed safely
+    console.log('USB interface notice:', e);
+  }
+
+  return { interfaceNumber, endpointNumber };
+}
+
+// Initialize Automatic Background Reconnection Event Listeners
+export function initAutoUsbPrinterReconnection(): void {
+  if (typeof window === 'undefined' || !('usb' in navigator)) return;
+
+  // Auto-bind when printer is turned back ON or USB cable re-plugged
+  (navigator as any).usb.addEventListener('connect', async (event: any) => {
+    console.log('USB Printer plugged in or powered ON:', event.device);
+    try {
+      if (event.device) {
+        await connectAndClaimUsbDevice(event.device);
+        localStorage.setItem('sunmi_usb_printer_paired', 'true');
+      }
+    } catch (err) {
+      console.warn('Auto USB connect handler notice:', err);
+    }
+  });
+
+  // Auto connect paired devices on startup
+  (navigator as any).usb.getDevices().then((devices: any[]) => {
+    if (devices && devices.length > 0) {
+      devices.forEach(async (device) => {
+        try {
+          await connectAndClaimUsbDevice(device);
+          localStorage.setItem('sunmi_usb_printer_paired', 'true');
+        } catch (e) {
+          console.log('Startup USB auto-connect notice:', e);
+        }
+      });
+    }
+  }).catch((err: any) => {
+    console.warn('Auto getDevices notice:', err);
+  });
+}
+
+// Direct WebUSB Hardware Printer Output Function with 100% Persistent Auto-Reconnect & Auto-Retry!
+export async function printDirectUsbEscPos(order: Order, settings: PrintSettings): Promise<boolean> {
+  const maxRetries = 2;
+
+  // Attempt WebUSB Auto-Reconnect & Direct Print
+  if ('usb' in navigator) {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const devices = await (navigator as any).usb.getDevices();
+        if (devices && devices.length > 0) {
+          const device = devices[0];
+          
+          const { interfaceNumber, endpointNumber } = await connectAndClaimUsbDevice(device);
+
+          const copies = settings.invoiceCopies || 2;
+          for (let i = 0; i < copies; i++) {
+            const rawBuffer = generateEscPosBuffer(order, settings);
+            await device.transferOut(endpointNumber, rawBuffer);
+          }
+
+          try {
+            await device.releaseInterface(interfaceNumber);
+            await device.close();
+          } catch (e) {
+            // Ignore close notice
+          }
+
+          return true; // Printing successful!
+        }
+      } catch (err) {
+        console.warn(`WebUSB Print attempt ${attempt + 1} failed, auto-retrying...`, err);
+        await new Promise((res) => setTimeout(res, 300));
+      }
+    }
+  }
+
+  // Attempt WebSerial Auto-Reconnect
+  if ('serial' in navigator) {
+    try {
       const ports = await (navigator as any).serial.getPorts();
       if (ports && ports.length > 0) {
         const port = ports[0];
@@ -188,9 +259,9 @@ export async function printDirectUsbEscPos(order: Order, settings: PrintSettings
         await port.close();
         return true;
       }
+    } catch (err) {
+      console.warn('Serial print notice:', err);
     }
-  } catch (err) {
-    console.warn('Direct USB ESC/POS print failed, falling back to window.print()', err);
   }
 
   return false;
