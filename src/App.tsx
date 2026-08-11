@@ -243,15 +243,9 @@ export default function App() {
             activeTableId={activeTableId}
             onSelectTable={handleSelectTable}
             activeOrder={activeOrder}
+            printSettings={printSettings}
             onUpdateOrder={handleUpdateOrder}
-            onOpenCheckout={(ord) => {
-              setBillingModalOrder(ord);
-              setBillingModalMode('CHECKOUT');
-            }}
-            onPrintKitchenTicket={(ord) => {
-              setBillingModalOrder(ord);
-              setBillingModalMode('KITCHEN_TICKET');
-            }}
+            onConfirmPayment={handleConfirmPayment}
           />
         )}
 
