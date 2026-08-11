@@ -22,6 +22,7 @@ import {
   CheckCircle2,
   X,
   Zap,
+  Printer,
   MessageSquare,
   ShoppingBag
 } from 'lucide-react';
@@ -285,6 +286,38 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
         <div className="p-3 bg-white border-b border-slate-200 space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="relative flex-1">
+        {/* PROMINENT HIGH-VISIBILITY CONNECT BUTTON FOR RONGTA RP355UL PRINTER */}
+        <div className="p-3 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-2 shadow-inner">
+          <div className="flex items-center space-x-2.5">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0">
+              <Printer className="w-5 h-5 text-emerald-400 animate-pulse" />
+            </div>
+            <div>
+              <h4 className="text-white font-black text-sm uppercase tracking-wide flex items-center space-x-2">
+                <span>MÁY IN BILL RONGTA MODEL RP355UL (USB)</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  TỰ ĐỘNG 100%
+                </span>
+              </h4>
+              <p className="text-slate-400 text-xs font-medium">
+                {printSettings?.usbDeviceName ? `🟢 ${printSettings.usbDeviceName}` : 'Bấm nút bên phải để cấp quyền kết nối máy in USB lần đầu'}
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={handlePairUsbPrinter}
+            className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-500/20 border border-emerald-400/40 flex items-center justify-center space-x-2 transition transform active:scale-95 cursor-pointer shrink-0"
+          >
+            <Zap className="w-4 h-4 fill-white shrink-0" />
+            <span>KẾT NỐI MÁY IN RONGTA RP355UL</span>
+          </button>
+        </div>
+
+        {/* Search & Category Filter */}
+        <div className="p-3 bg-white border-b border-slate-200 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="relative flex-1">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
@@ -294,15 +327,6 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
                 className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition"
               />
             </div>
-
-            <button
-              onClick={handlePairUsbPrinter}
-              title="Nhấn vào đây để ghép nối và cấp quyền cổng USB cho máy in Rongta RP355UL"
-              className="hidden sm:flex items-center space-x-1.5 text-[11px] font-mono text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 px-2.5 py-1.5 rounded-lg shrink-0 font-bold transition cursor-pointer active:scale-95 shadow-sm"
-            >
-              <Zap className="w-3.5 h-3.5 text-emerald-600 shrink-0 animate-pulse" />
-              <span>🟢 KHÔNG HIỆN POPUP: Máy in USB ({printSettings?.usbDeviceName || 'Rongta RP355UL'})</span>
-            </button>
           </div>
 
           <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none">
