@@ -195,6 +195,14 @@ export class POSStorageEngine {
     localStorage.setItem(STORAGE_KEYS.PERMANENT_REVENUE, JSON.stringify(records));
   }
 
+  // Delete permanent revenue by specific date (e.g. "2026-08-11")
+  static deleteRevenueByDate(dateStr: string): PermanentRevenueAggregate[] {
+    const records = this.getPermanentRevenue();
+    const updated = records.filter((r) => r.date !== dateStr);
+    this.savePermanentRevenue(updated);
+    return updated;
+  }
+
   // Delete permanent revenue by month (e.g. "2026-08")
   static deleteRevenueByMonth(yearMonthStr: string): PermanentRevenueAggregate[] {
     const records = this.getPermanentRevenue();
