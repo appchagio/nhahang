@@ -650,8 +650,8 @@ export const OrderingView: React.FC<OrderingViewProps> = ({
                 </thead>
                 <tbody>
                   {(orderForPrinting.items || []).map((item, idx) => (
-                    <tr key={idx} className="border-b-2 border-black text-[1.55em] font-black uppercase">
-                      <td className="border-r-2 border-black p-1 text-left font-black leading-tight tracking-tight uppercase">
+                    <tr key={idx} className="border-b-2 border-black text-[1.4em] font-black uppercase">
+                      <td className="border-r-2 border-black p-1 text-left font-black text-[1.4em] uppercase tracking-tight font-sans leading-tight">
                         {removeVietnameseAccents(item?.name || 'MON').toUpperCase()}
                       </td>
                       <td className="border-r-2 border-black p-1 text-center font-black">
